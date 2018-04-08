@@ -1,5 +1,3 @@
-package utils;
-
 public class Fraction{
 /**
   Looks for the greatest common divisor given 2 numbers
@@ -7,7 +5,7 @@ public class Fraction{
   @param int number a int number b
   @return the greatest common divisor
 */
-  private int greatestCommonDivisor(){
+  private int greatestCommonDivisor(int a, int b){
     if(b > a){
       int temp = a;
       a = b;

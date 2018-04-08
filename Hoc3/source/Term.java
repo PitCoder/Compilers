@@ -1,5 +1,3 @@
-package domain;
-
 public class Term implements Comparable<Term>{
   private int numerator;
   private int denominator;
@@ -30,7 +28,7 @@ public class Term implements Comparable<Term>{
   public String toString(){
     String coeff;
     String exponent;
-    if(this.numenator==0){
+    if(this.numerator==0){
       return "0";
     }
     if(this.exponent==0){
@@ -40,17 +38,17 @@ public class Term implements Comparable<Term>{
     }else{
       exponent="x^"+this.exponent;
     }
-    if(this.denominator==1 && this.numenator==1 && this.exponent==0){
+    if(this.denominator==1 && this.numerator==1 && this.exponent==0){
       coeff="1";
-    }else if(this.denominator==1 && this.numenator==1){
+    }else if(this.denominator==1 && this.numerator==1){
       coeff="";
-    }else if(((this.denominator==-1 && this.numenator==1)||(this.denominator==1 && this.numenator==-1)) && this.exponent>0){
+    }else if(((this.denominator==-1 && this.numerator==1)||(this.denominator==1 && this.numerator==-1)) && this.exponent>0){
       coeff="-";
     }
     else if(this.denominator==1){
-      coeff = this.numenator + "";
+      coeff = this.numerator + "";
     }else{
-      coeff = this.numenator + "/" + this.denominator;
+      coeff = this.numerator + "/" + this.denominator;
     }
     return coeff + "" + exponent;
   }

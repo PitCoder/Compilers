@@ -1,15 +1,20 @@
-package domain;
-
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import util.Fraction;
 
 public class Polynomial{
   private int scale = 1;
   private Fraction fraction = new Fraction();
-  private List<Term> polynomial = new ArrayList<Term>();
+  private List<Term> polynomial;
+
+  public Polynomial(){
+    this.polynomial = new ArrayList<Term>();
+  }
+
+  public Polynomial(ArrayList<Term> terms){
+    this.polynomial = terms;
+  }
 
   public void setScale(int a){
     this.scale = a;
@@ -19,7 +24,8 @@ public class Polynomial{
     return scale;
   }
 
-  @Override toString(){
+  @Override
+  public String toString(){
     if(polynomial.isEmpty()){
       return "0";
     }
@@ -145,7 +151,7 @@ public class Polynomial{
   @param void
   @return int that it is the highest degree of the polynomial
 */
-  public int Polynomial highestDegree(){
+  public int highestDegree(){
     return polynomial.get(0).getExponent();
   }
 
@@ -166,7 +172,7 @@ public class Polynomial{
   public Polynomial divideWithDegree(int exponent){
     Polynomial result = new Polynomial();
     for(Term term : polynomial){
-      result.addTerm(term.getCoefficient()[0],terms.getCoefficient()[1],term.getExponent()-degree);
+      result.addTerm(term.getCoefficient()[0],term.getCoefficient()[1],term.getExponent()-exponent);
     }
     result.reduce();
     return result;
