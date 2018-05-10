@@ -350,9 +350,8 @@ HashMap<String,Symbol> symbolTable = new HashMap<>();
 }
 
   void update(Symbol s, Polynomial data) {
-    Symbol newSymbol = s;
     symbolTable.remove(s.getName());
-    newSymbol.setData(data);
+    s.setData(data);
     symbolTable.put(s.getName(),s);
 }
 
@@ -385,7 +384,7 @@ public static void main(String args[]) throws IOException {
     e.printStackTrace();
   }
 }
-//#line 317 "Parser.java"
+//#line 316 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -797,7 +796,7 @@ case 21:
   yyval = new ParserVal(t);
 }
 break;
-//#line 724 "Parser.java"
+//#line 723 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

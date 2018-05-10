@@ -285,9 +285,8 @@ HashMap<String,Symbol> symbolTable = new HashMap<>();
 }
 
   void update(Symbol s, Polynomial data) {
-    Symbol newSymbol = s;
     symbolTable.remove(s.getName());
-    newSymbol.setData(data);
+    s.setData(data);
     symbolTable.put(s.getName(),s);
 }
 
