@@ -1,0 +1,446 @@
+   0  $accept : list $end
+
+   1  list :
+   2       | list '\n'
+   3       | list asgn '\n'
+   4       | list expr '\n'
+
+   5  asgn : VAR '=' expr
+
+   6  expr : poly
+   7       | VAR
+   8       | asgn
+   9       | BLTIN '(' SNUM ')'
+  10       | BLTIN '(' SNUM ',' SNUM ')'
+  11       | expr '+' expr
+  12       | expr '-' expr
+  13       | expr '*' expr
+  14       | expr '/' expr
+  15       | expr '^' SNUM
+  16       | '(' expr ')'
+
+  17  poly : '[' terms ']'
+  18       | '[' ']'
+
+  19  terms : term
+  20        | term terms
+
+  21  term : TERM
+
+state 0
+	$accept : . list $end  (0)
+	list : .  (1)
+
+	.  reduce 1
+
+	list  goto 1
+
+
+state 1
+	$accept : list . $end  (0)
+	list : list . '\n'  (2)
+	list : list . asgn '\n'  (3)
+	list : list . expr '\n'  (4)
+
+	$end  accept
+	BLTIN  shift 2
+	VAR  shift 3
+	'('  shift 4
+	'['  shift 5
+	'\n'  shift 6
+	.  error
+
+	asgn  goto 7
+	expr  goto 8
+	poly  goto 9
+
+
+state 2
+	expr : BLTIN . '(' SNUM ')'  (9)
+	expr : BLTIN . '(' SNUM ',' SNUM ')'  (10)
+
+	'('  shift 10
+	.  error
+
+
+state 3
+	asgn : VAR . '=' expr  (5)
+	expr : VAR .  (7)
+
+	'='  shift 11
+	'-'  reduce 7
+	'+'  reduce 7
+	'/'  reduce 7
+	'*'  reduce 7
+	'^'  reduce 7
+	')'  reduce 7
+	'\n'  reduce 7
+
+
+state 4
+	expr : '(' . expr ')'  (16)
+
+	BLTIN  shift 2
+	VAR  shift 3
+	'('  shift 4
+	'['  shift 5
+	.  error
+
+	asgn  goto 12
+	expr  goto 13
+	poly  goto 9
+
+
+state 5
+	poly : '[' . terms ']'  (17)
+	poly : '[' . ']'  (18)
+
+	TERM  shift 14
+	']'  shift 15
+	.  error
+
+	terms  goto 16
+	term  goto 17
+
+
+state 6
+	list : list '\n' .  (2)
+
+	.  reduce 2
+
+
+7: shift/reduce conflict (shift 18, reduce 8) on '\n'
+state 7
+	list : list asgn . '\n'  (3)
+	expr : asgn .  (8)
+
+	'\n'  shift 18
+	'-'  reduce 8
+	'+'  reduce 8
+	'/'  reduce 8
+	'*'  reduce 8
+	'^'  reduce 8
+
+
+state 8
+	list : list expr . '\n'  (4)
+	expr : expr . '+' expr  (11)
+	expr : expr . '-' expr  (12)
+	expr : expr . '*' expr  (13)
+	expr : expr . '/' expr  (14)
+	expr : expr . '^' SNUM  (15)
+
+	'-'  shift 19
+	'+'  shift 20
+	'/'  shift 21
+	'*'  shift 22
+	'^'  shift 23
+	'\n'  shift 24
+	.  error
+
+
+state 9
+	expr : poly .  (6)
+
+	.  reduce 6
+
+
+state 10
+	expr : BLTIN '(' . SNUM ')'  (9)
+	expr : BLTIN '(' . SNUM ',' SNUM ')'  (10)
+
+	SNUM  shift 25
+	.  error
+
+
+state 11
+	asgn : VAR '=' . expr  (5)
+
+	BLTIN  shift 2
+	VAR  shift 3
+	'('  shift 4
+	'['  shift 5
+	.  error
+
+	asgn  goto 12
+	expr  goto 26
+	poly  goto 9
+
+
+state 12
+	expr : asgn .  (8)
+
+	.  reduce 8
+
+
+state 13
+	expr : expr . '+' expr  (11)
+	expr : expr . '-' expr  (12)
+	expr : expr . '*' expr  (13)
+	expr : expr . '/' expr  (14)
+	expr : expr . '^' SNUM  (15)
+	expr : '(' expr . ')'  (16)
+
+	'-'  shift 19
+	'+'  shift 20
+	'/'  shift 21
+	'*'  shift 22
+	'^'  shift 23
+	')'  shift 27
+	.  error
+
+
+state 14
+	term : TERM .  (21)
+
+	.  reduce 21
+
+
+state 15
+	poly : '[' ']' .  (18)
+
+	.  reduce 18
+
+
+state 16
+	poly : '[' terms . ']'  (17)
+
+	']'  shift 28
+	.  error
+
+
+state 17
+	terms : term .  (19)
+	terms : term . terms  (20)
+
+	TERM  shift 14
+	']'  reduce 19
+
+	terms  goto 29
+	term  goto 17
+
+
+state 18
+	list : list asgn '\n' .  (3)
+
+	.  reduce 3
+
+
+state 19
+	expr : expr '-' . expr  (12)
+
+	BLTIN  shift 2
+	VAR  shift 3
+	'('  shift 4
+	'['  shift 5
+	.  error
+
+	asgn  goto 12
+	expr  goto 30
+	poly  goto 9
+
+
+state 20
+	expr : expr '+' . expr  (11)
+
+	BLTIN  shift 2
+	VAR  shift 3
+	'('  shift 4
+	'['  shift 5
+	.  error
+
+	asgn  goto 12
+	expr  goto 31
+	poly  goto 9
+
+
+state 21
+	expr : expr '/' . expr  (14)
+
+	BLTIN  shift 2
+	VAR  shift 3
+	'('  shift 4
+	'['  shift 5
+	.  error
+
+	asgn  goto 12
+	expr  goto 32
+	poly  goto 9
+
+
+state 22
+	expr : expr '*' . expr  (13)
+
+	BLTIN  shift 2
+	VAR  shift 3
+	'('  shift 4
+	'['  shift 5
+	.  error
+
+	asgn  goto 12
+	expr  goto 33
+	poly  goto 9
+
+
+state 23
+	expr : expr '^' . SNUM  (15)
+
+	SNUM  shift 34
+	.  error
+
+
+state 24
+	list : list expr '\n' .  (4)
+
+	.  reduce 4
+
+
+state 25
+	expr : BLTIN '(' SNUM . ')'  (9)
+	expr : BLTIN '(' SNUM . ',' SNUM ')'  (10)
+
+	')'  shift 35
+	','  shift 36
+	.  error
+
+
+state 26
+	asgn : VAR '=' expr .  (5)
+	expr : expr . '+' expr  (11)
+	expr : expr . '-' expr  (12)
+	expr : expr . '*' expr  (13)
+	expr : expr . '/' expr  (14)
+	expr : expr . '^' SNUM  (15)
+
+	'-'  shift 19
+	'+'  shift 20
+	'/'  shift 21
+	'*'  shift 22
+	'^'  shift 23
+	')'  reduce 5
+	'\n'  reduce 5
+
+
+state 27
+	expr : '(' expr ')' .  (16)
+
+	.  reduce 16
+
+
+state 28
+	poly : '[' terms ']' .  (17)
+
+	.  reduce 17
+
+
+state 29
+	terms : term terms .  (20)
+
+	.  reduce 20
+
+
+state 30
+	expr : expr . '+' expr  (11)
+	expr : expr . '-' expr  (12)
+	expr : expr '-' expr .  (12)
+	expr : expr . '*' expr  (13)
+	expr : expr . '/' expr  (14)
+	expr : expr . '^' SNUM  (15)
+
+	'/'  shift 21
+	'*'  shift 22
+	'^'  shift 23
+	'-'  reduce 12
+	'+'  reduce 12
+	')'  reduce 12
+	'\n'  reduce 12
+
+
+state 31
+	expr : expr . '+' expr  (11)
+	expr : expr '+' expr .  (11)
+	expr : expr . '-' expr  (12)
+	expr : expr . '*' expr  (13)
+	expr : expr . '/' expr  (14)
+	expr : expr . '^' SNUM  (15)
+
+	'/'  shift 21
+	'*'  shift 22
+	'^'  shift 23
+	'-'  reduce 11
+	'+'  reduce 11
+	')'  reduce 11
+	'\n'  reduce 11
+
+
+state 32
+	expr : expr . '+' expr  (11)
+	expr : expr . '-' expr  (12)
+	expr : expr . '*' expr  (13)
+	expr : expr . '/' expr  (14)
+	expr : expr '/' expr .  (14)
+	expr : expr . '^' SNUM  (15)
+
+	'^'  shift 23
+	'-'  reduce 14
+	'+'  reduce 14
+	'/'  reduce 14
+	'*'  reduce 14
+	')'  reduce 14
+	'\n'  reduce 14
+
+
+state 33
+	expr : expr . '+' expr  (11)
+	expr : expr . '-' expr  (12)
+	expr : expr . '*' expr  (13)
+	expr : expr '*' expr .  (13)
+	expr : expr . '/' expr  (14)
+	expr : expr . '^' SNUM  (15)
+
+	'^'  shift 23
+	'-'  reduce 13
+	'+'  reduce 13
+	'/'  reduce 13
+	'*'  reduce 13
+	')'  reduce 13
+	'\n'  reduce 13
+
+
+state 34
+	expr : expr '^' SNUM .  (15)
+
+	.  reduce 15
+
+
+state 35
+	expr : BLTIN '(' SNUM ')' .  (9)
+
+	.  reduce 9
+
+
+state 36
+	expr : BLTIN '(' SNUM ',' . SNUM ')'  (10)
+
+	SNUM  shift 37
+	.  error
+
+
+state 37
+	expr : BLTIN '(' SNUM ',' SNUM . ')'  (10)
+
+	')'  shift 38
+	.  error
+
+
+state 38
+	expr : BLTIN '(' SNUM ',' SNUM ')' .  (10)
+
+	.  reduce 10
+
+
+State 7 contains 1 shift/reduce conflict.
+
+
+18 terminals, 7 nonterminals
+22 grammar rules, 39 states
