@@ -17,7 +17,7 @@
 %}
 
 newline    = \r | \n | \r\n       //Using Java conventions
-operator   = ["+""-""*""/""=""("")""[""]""^"]            //Operators for calculator
+operator   = ["+""-""*""/""%""=""("")""[""]""^"]            //Operators for calculator
 comma      = ,                    //Comma character
 ws         = [ \t]+               //Whitespace Regex
 digits     = [0-9]                //Digit Regex
@@ -26,7 +26,7 @@ signednum  = [+|-]*(0|([1-9]{digits}*))
 nonzeronum = ([1-9]{digits}*)
 term       = {ws}*[+|-]*{ws}*{number}{ws}*([/][+|-]*{nonzeronum})*x[+|-]*{ws}*{number}{ws}*
 variable   = [a-zA-Z][a-zA-Z0-9_]* //Variable - Indentifier Regex
-builtin    = geometric | binomial | nbinomial | integer | derivate // geom - abbrv for geometric and bi for binomial
+builtin    = geometric | binomial | nbinomial | integral | derivative // geom - abbrv for geometric and bi for binomial
 %%
 
 /***** LEXICAL RULES *****/

@@ -2,12 +2,13 @@ public class Div{
   public Div(){
   }
 
-  public Polynomial division(Polynomial divisor, Polynomial dividend){
+  public Polynomial[] division(Polynomial divisor, Polynomial dividend){
     divisor.reduce();
     dividend.reduce();
     System.out.println("Divisor: " + divisor.toString());
     System.out.println("Dividend: " + dividend.toString());
 
+    Polynomial[] res = new Polynomial[2];
     Polynomial result = new Polynomial();
     Polynomial temp;
 
@@ -29,12 +30,16 @@ public class Div{
     if(a.getExponent() == 0){
       System.out.println("I detected that exp(a) = 0");
       dividend.divideWithCoeff(a.getCoefficient());
-      return zero;
+      res[0] = zero;
+      res[1] = zero;
+      return res;
     }
     else{
       if(a.getExponent() > b.getExponent()){
         System.out.println("I detected that exp(a) > exp(b)");
-        return zero;
+        res[0] = zero;
+        res[1] = dividend;
+        return res;
       }
       else{
         while(a.getExponent() <= b.getExponent()){
@@ -49,12 +54,16 @@ public class Div{
           b = dividend.termAt(0);
         }
         if(dividend.toString().equals("0")){
-          return result;
+          res[0] = result;
+          res[1] = zero;
+          return res;
         }
         else{
           System.out.println("I detected a reduction");
           dividend.reduce();
-          return result;
+          res[0] = result;
+          res[1] = dividend;
+          return res;
         }
       }
     }

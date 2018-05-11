@@ -23,8 +23,8 @@ public class Machine{
 
   /*** INITIALIZING THE SYMBOL TABLE ***/
   private void init(){
-    String[] funcNames = {"geom", "bi", "nbi", "int", "derv"};
-    String[] callNames = {"geometric", "binomial", "nbinomial", "integer", "derivate"};
+    String[] funcNames = {"geom", "bi", "nbi", "intgr", "derv"};
+    String[] callNames = {"geometric", "binomial", "nbinomial", "integral", "derivative"};
     /* Then we install them */
     /* function: install, args: String[] callNames, String[] funcNames, Polynomial null, short 2 */
     for(int i=0; i<callNames.length; i++)
@@ -138,21 +138,27 @@ public class Machine{
 
   /*** CODE TO BUILD A BUILT-IN ***/
   public void builtin(){
-    /* Then we retrieve the number of parameters of the function */
-    int numparam = (int) stack.pop();
-    Class[] args = new Class[numparam];
-    Object[] params = new Object[numparam];
-
-    for(int i=(numparam-1); i>=0; i--){
-      int param = (int) stack.pop();
-      args[i] = int.class;
-      params[i] = param;
-    }
-
     /* We retrieve the symbol from the stack */
     InputText identifier = (InputText) stack.pop();
     /* We look on the table for the name */
     Symbol symbol =  symbolTable.lookUpTable(identifier.getText());
+    /* Then we retrieve the number of parameters of the function */
+    int numparam = (int) stack.pop();
+    Class[] args = new Class[numparam];
+    Object[] params = new Object[numparam];
+    Polynomial p = new Polynomial();
+
+    for(int i=(numparam-1); i>=0; i--){
+      //System.out.println(stack.peek().getClass());
+      if(stack.peek().getClass().equals(Integer.class)){
+        args[i] = int.class;
+        params[i] = (int) stack.pop();
+      }
+      else{
+        args[i] = p.getClass();
+        params[i] = (Polynomial) stack.pop();
+      }
+    }
 
     /* Invocation of the the respective method */
     String funcName = symbol.getFuncName();
@@ -204,10 +210,22 @@ public class Machine{
   /* Division operation code */
   public void division(){
     Polynomial a,b;
+    Polynomial[] result;
     b = (Polynomial) stack.pop();
     a = (Polynomial) stack.pop();
     Div div = new Div();
-    stack.push(div.division(b,a));
+    result = div.division(b,a);
+    stack.push(result[0]);
+  }
+  /* Module operation code */
+  public void module(){
+    Polynomial a,b;
+    Polynomial[] result;
+    b = (Polynomial) stack.pop();
+    a = (Polynomial) stack.pop();
+    Div div = new Div();
+    result = div.division(b,a);
+    stack.push(result[1]);
   }
   /* Power operation code */
   public void power(){

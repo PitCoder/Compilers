@@ -13,7 +13,7 @@
 //Operators precedence
 %right '='
 %left '-' '+'
-%left '/' '*'
+%left '/' '%' '*'
 %left '^'
 %nonassoc '(' ')'
 %nonassoc '[' ']'
@@ -58,24 +58,32 @@ expr : poly
      }
      | BLTIN '(' NUM ')' {
        //System.out.print("Built-in Detected: ");
-       machine.code("builtinPush");
-       machine.code((InputText) $1.obj);
        machine.code("number");
        machine.code((InputText) $3.obj);
        machine.code("numParam");
        machine.code(new InputText("1"));
+       machine.code("builtinPush");
+       machine.code((InputText) $1.obj);
        machine.code("builtin");
      }
      | BLTIN '(' NUM ',' NUM ')' {
        //System.out.print("Built-in Detected: ");
-       machine.code("builtinPush");
-       machine.code((InputText) $1.obj);
        machine.code("number");
        machine.code((InputText) $3.obj);
        machine.code("number");
        machine.code((InputText) $5.obj);
        machine.code("numParam");
        machine.code(new InputText("2"));
+       machine.code("builtinPush");
+       machine.code((InputText) $1.obj);
+       machine.code("builtin");
+     }
+     | BLTIN '(' expr ')' {
+       //System.out.print("Built-in Detected: ");
+       machine.code("numParam");
+       machine.code(new InputText("1"));
+       machine.code("builtinPush");
+       machine.code((InputText) $1.obj);
        machine.code("builtin");
      }
      | expr '+' expr {
@@ -93,6 +101,10 @@ expr : poly
      | expr '/' expr {
        //System.out.println("Division Detected");
        machine.code("division");
+     }
+     | expr '%' expr {
+       //System.out.println("Division Detected");
+       machine.code("module");
      }
      | expr '^' NUM {
        //System.out.println("Power Detected");

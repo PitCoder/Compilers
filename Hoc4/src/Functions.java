@@ -33,4 +33,16 @@ public class Functions {
     Binomial bi = new Binomial();
     return bi.newtonBinomial('n', y, n);
   }
+
+  /*** Indefinitive Integral ***/
+  public Polynomial intgr(Polynomial p){
+    Integral integral = new Integral();
+    return integral.indefinite(p);
+  }
+
+  /*** Indefinitive Derivative ***/
+  public Polynomial derv(Polynomial p){
+    Derivative derivative = new Derivative();
+    return derivative.indefinite(p);
+  }
 }

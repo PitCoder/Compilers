@@ -14,6 +14,8 @@ javac Div.java -d /home/ESCOM/Documents/Repositorios/Compilers/Hoc4/build
 javac Pow.java -d /home/ESCOM/Documents/Repositorios/Compilers/Hoc4/build
 javac Binomial.java -d /home/ESCOM/Documents/Repositorios/Compilers/Hoc4/build
 javac Geometric.java -d /home/ESCOM/Documents/Repositorios/Compilers/Hoc4/build
+javac Integral.java -d /home/ESCOM/Documents/Repositorios/Compilers/Hoc4/build
+javac Derivative.java -d /home/ESCOM/Documents/Repositorios/Compilers/Hoc4/build
 javac Functions.java -d /home/ESCOM/Documents/Repositorios/Compilers/Hoc4/build
 javac Machine.java -d /home/ESCOM/Documents/Repositorios/Compilers/Hoc4/build
 

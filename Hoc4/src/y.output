@@ -12,20 +12,22 @@
    8       | asgn
    9       | BLTIN '(' NUM ')'
   10       | BLTIN '(' NUM ',' NUM ')'
-  11       | expr '+' expr
-  12       | expr '-' expr
-  13       | expr '*' expr
-  14       | expr '/' expr
-  15       | expr '^' NUM
-  16       | '(' expr ')'
+  11       | BLTIN '(' expr ')'
+  12       | expr '+' expr
+  13       | expr '-' expr
+  14       | expr '*' expr
+  15       | expr '/' expr
+  16       | expr '%' expr
+  17       | expr '^' NUM
+  18       | '(' expr ')'
 
-  17  poly : '[' terms ']'
-  18       | '[' ']'
+  19  poly : '[' terms ']'
+  20       | '[' ']'
 
-  19  terms : term
-  20        | term terms
+  21  terms : term
+  22        | term terms
 
-  21  term : TERM
+  23  term : TERM
 
 state 0
 	$accept : . list $end  (0)
@@ -58,6 +60,7 @@ state 1
 state 2
 	expr : BLTIN . '(' NUM ')'  (9)
 	expr : BLTIN . '(' NUM ',' NUM ')'  (10)
+	expr : BLTIN . '(' expr ')'  (11)
 
 	'('  shift 10
 	.  error
@@ -71,6 +74,7 @@ state 3
 	'-'  reduce 7
 	'+'  reduce 7
 	'/'  reduce 7
+	'%'  reduce 7
 	'*'  reduce 7
 	'^'  reduce 7
 	')'  reduce 7
@@ -78,7 +82,7 @@ state 3
 
 
 state 4
-	expr : '(' . expr ')'  (16)
+	expr : '(' . expr ')'  (18)
 
 	BLTIN  shift 2
 	VAR  shift 3
@@ -92,8 +96,8 @@ state 4
 
 
 state 5
-	poly : '[' . terms ']'  (17)
-	poly : '[' . ']'  (18)
+	poly : '[' . terms ']'  (19)
+	poly : '[' . ']'  (20)
 
 	TERM  shift 14
 	']'  shift 15
@@ -118,24 +122,27 @@ state 7
 	'-'  reduce 8
 	'+'  reduce 8
 	'/'  reduce 8
+	'%'  reduce 8
 	'*'  reduce 8
 	'^'  reduce 8
 
 
 state 8
 	list : list expr . '\n'  (4)
-	expr : expr . '+' expr  (11)
-	expr : expr . '-' expr  (12)
-	expr : expr . '*' expr  (13)
-	expr : expr . '/' expr  (14)
-	expr : expr . '^' NUM  (15)
+	expr : expr . '+' expr  (12)
+	expr : expr . '-' expr  (13)
+	expr : expr . '*' expr  (14)
+	expr : expr . '/' expr  (15)
+	expr : expr . '%' expr  (16)
+	expr : expr . '^' NUM  (17)
 
 	'-'  shift 19
 	'+'  shift 20
 	'/'  shift 21
-	'*'  shift 22
-	'^'  shift 23
-	'\n'  shift 24
+	'%'  shift 22
+	'*'  shift 23
+	'^'  shift 24
+	'\n'  shift 25
 	.  error
 
 
@@ -148,9 +155,18 @@ state 9
 state 10
 	expr : BLTIN '(' . NUM ')'  (9)
 	expr : BLTIN '(' . NUM ',' NUM ')'  (10)
+	expr : BLTIN '(' . expr ')'  (11)
 
-	NUM  shift 25
+	BLTIN  shift 2
+	VAR  shift 3
+	NUM  shift 26
+	'('  shift 4
+	'['  shift 5
 	.  error
+
+	asgn  goto 12
+	expr  goto 27
+	poly  goto 9
 
 
 state 11
@@ -163,7 +179,7 @@ state 11
 	.  error
 
 	asgn  goto 12
-	expr  goto 26
+	expr  goto 28
 	poly  goto 9
 
 
@@ -174,49 +190,51 @@ state 12
 
 
 state 13
-	expr : expr . '+' expr  (11)
-	expr : expr . '-' expr  (12)
-	expr : expr . '*' expr  (13)
-	expr : expr . '/' expr  (14)
-	expr : expr . '^' NUM  (15)
-	expr : '(' expr . ')'  (16)
+	expr : expr . '+' expr  (12)
+	expr : expr . '-' expr  (13)
+	expr : expr . '*' expr  (14)
+	expr : expr . '/' expr  (15)
+	expr : expr . '%' expr  (16)
+	expr : expr . '^' NUM  (17)
+	expr : '(' expr . ')'  (18)
 
 	'-'  shift 19
 	'+'  shift 20
 	'/'  shift 21
-	'*'  shift 22
-	'^'  shift 23
-	')'  shift 27
+	'%'  shift 22
+	'*'  shift 23
+	'^'  shift 24
+	')'  shift 29
 	.  error
 
 
 state 14
-	term : TERM .  (21)
+	term : TERM .  (23)
 
-	.  reduce 21
+	.  reduce 23
 
 
 state 15
-	poly : '[' ']' .  (18)
+	poly : '[' ']' .  (20)
 
-	.  reduce 18
+	.  reduce 20
 
 
 state 16
-	poly : '[' terms . ']'  (17)
+	poly : '[' terms . ']'  (19)
 
-	']'  shift 28
+	']'  shift 30
 	.  error
 
 
 state 17
-	terms : term .  (19)
-	terms : term . terms  (20)
+	terms : term .  (21)
+	terms : term . terms  (22)
 
 	TERM  shift 14
-	']'  reduce 19
+	']'  reduce 21
 
-	terms  goto 29
+	terms  goto 31
 	term  goto 17
 
 
@@ -227,35 +245,7 @@ state 18
 
 
 state 19
-	expr : expr '-' . expr  (12)
-
-	BLTIN  shift 2
-	VAR  shift 3
-	'('  shift 4
-	'['  shift 5
-	.  error
-
-	asgn  goto 12
-	expr  goto 30
-	poly  goto 9
-
-
-state 20
-	expr : expr '+' . expr  (11)
-
-	BLTIN  shift 2
-	VAR  shift 3
-	'('  shift 4
-	'['  shift 5
-	.  error
-
-	asgn  goto 12
-	expr  goto 31
-	poly  goto 9
-
-
-state 21
-	expr : expr '/' . expr  (14)
+	expr : expr '-' . expr  (13)
 
 	BLTIN  shift 2
 	VAR  shift 3
@@ -268,8 +258,8 @@ state 21
 	poly  goto 9
 
 
-state 22
-	expr : expr '*' . expr  (13)
+state 20
+	expr : expr '+' . expr  (12)
 
 	BLTIN  shift 2
 	VAR  shift 3
@@ -282,158 +272,254 @@ state 22
 	poly  goto 9
 
 
-state 23
-	expr : expr '^' . NUM  (15)
+state 21
+	expr : expr '/' . expr  (15)
 
-	NUM  shift 34
+	BLTIN  shift 2
+	VAR  shift 3
+	'('  shift 4
+	'['  shift 5
 	.  error
+
+	asgn  goto 12
+	expr  goto 34
+	poly  goto 9
+
+
+state 22
+	expr : expr '%' . expr  (16)
+
+	BLTIN  shift 2
+	VAR  shift 3
+	'('  shift 4
+	'['  shift 5
+	.  error
+
+	asgn  goto 12
+	expr  goto 35
+	poly  goto 9
+
+
+state 23
+	expr : expr '*' . expr  (14)
+
+	BLTIN  shift 2
+	VAR  shift 3
+	'('  shift 4
+	'['  shift 5
+	.  error
+
+	asgn  goto 12
+	expr  goto 36
+	poly  goto 9
 
 
 state 24
+	expr : expr '^' . NUM  (17)
+
+	NUM  shift 37
+	.  error
+
+
+state 25
 	list : list expr '\n' .  (4)
 
 	.  reduce 4
 
 
-state 25
+state 26
 	expr : BLTIN '(' NUM . ')'  (9)
 	expr : BLTIN '(' NUM . ',' NUM ')'  (10)
 
-	')'  shift 35
-	','  shift 36
+	')'  shift 38
+	','  shift 39
 	.  error
 
 
-state 26
-	asgn : VAR '=' expr .  (5)
-	expr : expr . '+' expr  (11)
-	expr : expr . '-' expr  (12)
-	expr : expr . '*' expr  (13)
-	expr : expr . '/' expr  (14)
-	expr : expr . '^' NUM  (15)
+state 27
+	expr : BLTIN '(' expr . ')'  (11)
+	expr : expr . '+' expr  (12)
+	expr : expr . '-' expr  (13)
+	expr : expr . '*' expr  (14)
+	expr : expr . '/' expr  (15)
+	expr : expr . '%' expr  (16)
+	expr : expr . '^' NUM  (17)
 
 	'-'  shift 19
 	'+'  shift 20
 	'/'  shift 21
-	'*'  shift 22
-	'^'  shift 23
+	'%'  shift 22
+	'*'  shift 23
+	'^'  shift 24
+	')'  shift 40
+	.  error
+
+
+state 28
+	asgn : VAR '=' expr .  (5)
+	expr : expr . '+' expr  (12)
+	expr : expr . '-' expr  (13)
+	expr : expr . '*' expr  (14)
+	expr : expr . '/' expr  (15)
+	expr : expr . '%' expr  (16)
+	expr : expr . '^' NUM  (17)
+
+	'-'  shift 19
+	'+'  shift 20
+	'/'  shift 21
+	'%'  shift 22
+	'*'  shift 23
+	'^'  shift 24
 	')'  reduce 5
 	'\n'  reduce 5
 
 
-state 27
-	expr : '(' expr ')' .  (16)
-
-	.  reduce 16
-
-
-state 28
-	poly : '[' terms ']' .  (17)
-
-	.  reduce 17
-
-
 state 29
-	terms : term terms .  (20)
+	expr : '(' expr ')' .  (18)
 
-	.  reduce 20
+	.  reduce 18
 
 
 state 30
-	expr : expr . '+' expr  (11)
-	expr : expr . '-' expr  (12)
-	expr : expr '-' expr .  (12)
-	expr : expr . '*' expr  (13)
-	expr : expr . '/' expr  (14)
-	expr : expr . '^' NUM  (15)
+	poly : '[' terms ']' .  (19)
+
+	.  reduce 19
+
+
+state 31
+	terms : term terms .  (22)
+
+	.  reduce 22
+
+
+state 32
+	expr : expr . '+' expr  (12)
+	expr : expr . '-' expr  (13)
+	expr : expr '-' expr .  (13)
+	expr : expr . '*' expr  (14)
+	expr : expr . '/' expr  (15)
+	expr : expr . '%' expr  (16)
+	expr : expr . '^' NUM  (17)
 
 	'/'  shift 21
-	'*'  shift 22
-	'^'  shift 23
+	'%'  shift 22
+	'*'  shift 23
+	'^'  shift 24
+	'-'  reduce 13
+	'+'  reduce 13
+	')'  reduce 13
+	'\n'  reduce 13
+
+
+state 33
+	expr : expr . '+' expr  (12)
+	expr : expr '+' expr .  (12)
+	expr : expr . '-' expr  (13)
+	expr : expr . '*' expr  (14)
+	expr : expr . '/' expr  (15)
+	expr : expr . '%' expr  (16)
+	expr : expr . '^' NUM  (17)
+
+	'/'  shift 21
+	'%'  shift 22
+	'*'  shift 23
+	'^'  shift 24
 	'-'  reduce 12
 	'+'  reduce 12
 	')'  reduce 12
 	'\n'  reduce 12
 
 
-state 31
-	expr : expr . '+' expr  (11)
-	expr : expr '+' expr .  (11)
-	expr : expr . '-' expr  (12)
-	expr : expr . '*' expr  (13)
-	expr : expr . '/' expr  (14)
-	expr : expr . '^' NUM  (15)
+state 34
+	expr : expr . '+' expr  (12)
+	expr : expr . '-' expr  (13)
+	expr : expr . '*' expr  (14)
+	expr : expr . '/' expr  (15)
+	expr : expr '/' expr .  (15)
+	expr : expr . '%' expr  (16)
+	expr : expr . '^' NUM  (17)
 
-	'/'  shift 21
-	'*'  shift 22
-	'^'  shift 23
-	'-'  reduce 11
-	'+'  reduce 11
-	')'  reduce 11
-	'\n'  reduce 11
+	'^'  shift 24
+	'-'  reduce 15
+	'+'  reduce 15
+	'/'  reduce 15
+	'%'  reduce 15
+	'*'  reduce 15
+	')'  reduce 15
+	'\n'  reduce 15
 
 
-state 32
-	expr : expr . '+' expr  (11)
-	expr : expr . '-' expr  (12)
-	expr : expr . '*' expr  (13)
-	expr : expr . '/' expr  (14)
-	expr : expr '/' expr .  (14)
-	expr : expr . '^' NUM  (15)
+state 35
+	expr : expr . '+' expr  (12)
+	expr : expr . '-' expr  (13)
+	expr : expr . '*' expr  (14)
+	expr : expr . '/' expr  (15)
+	expr : expr . '%' expr  (16)
+	expr : expr '%' expr .  (16)
+	expr : expr . '^' NUM  (17)
 
-	'^'  shift 23
+	'^'  shift 24
+	'-'  reduce 16
+	'+'  reduce 16
+	'/'  reduce 16
+	'%'  reduce 16
+	'*'  reduce 16
+	')'  reduce 16
+	'\n'  reduce 16
+
+
+state 36
+	expr : expr . '+' expr  (12)
+	expr : expr . '-' expr  (13)
+	expr : expr . '*' expr  (14)
+	expr : expr '*' expr .  (14)
+	expr : expr . '/' expr  (15)
+	expr : expr . '%' expr  (16)
+	expr : expr . '^' NUM  (17)
+
+	'^'  shift 24
 	'-'  reduce 14
 	'+'  reduce 14
 	'/'  reduce 14
+	'%'  reduce 14
 	'*'  reduce 14
 	')'  reduce 14
 	'\n'  reduce 14
 
 
-state 33
-	expr : expr . '+' expr  (11)
-	expr : expr . '-' expr  (12)
-	expr : expr . '*' expr  (13)
-	expr : expr '*' expr .  (13)
-	expr : expr . '/' expr  (14)
-	expr : expr . '^' NUM  (15)
+state 37
+	expr : expr '^' NUM .  (17)
 
-	'^'  shift 23
-	'-'  reduce 13
-	'+'  reduce 13
-	'/'  reduce 13
-	'*'  reduce 13
-	')'  reduce 13
-	'\n'  reduce 13
+	.  reduce 17
 
 
-state 34
-	expr : expr '^' NUM .  (15)
-
-	.  reduce 15
-
-
-state 35
+state 38
 	expr : BLTIN '(' NUM ')' .  (9)
 
 	.  reduce 9
 
 
-state 36
+state 39
 	expr : BLTIN '(' NUM ',' . NUM ')'  (10)
 
-	NUM  shift 37
+	NUM  shift 41
 	.  error
 
 
-state 37
+state 40
+	expr : BLTIN '(' expr ')' .  (11)
+
+	.  reduce 11
+
+
+state 41
 	expr : BLTIN '(' NUM ',' NUM . ')'  (10)
 
-	')'  shift 38
+	')'  shift 42
 	.  error
 
 
-state 38
+state 42
 	expr : BLTIN '(' NUM ',' NUM ')' .  (10)
 
 	.  reduce 10
@@ -442,5 +528,5 @@ state 38
 State 7 contains 1 shift/reduce conflict.
 
 
-18 terminals, 7 nonterminals
-22 grammar rules, 39 states
+19 terminals, 7 nonterminals
+24 grammar rules, 43 states
