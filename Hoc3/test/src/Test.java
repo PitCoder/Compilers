@@ -166,30 +166,48 @@ public class Test{
     System.out.println("Resultado:\n Cociente: "+ divab[0].toString()
     + "\nResiduo: " + divab[1].toString() + "/(" + divab[2].toString() + ")");
 
+    System.out.println("Test no. 6 ==== DERIVATIVE ====");
+
     a_terms.clear();
     b_terms.clear();
 
-    //Representando el polinomio x-¹ - 2x + x²
-    a_terms.add(new Term(1,1,-1));
-    a_terms.add(new Term(-2,1,1));
+    //Representando el polinomio x² + 2x - 1
     a_terms.add(new Term(1,1,2));
-
-    //Representando el polinomio x² - 2x³ + 4x⁴
-    b_terms.add(new Term(1,1,2));
-    b_terms.add(new Term(-2,1,3));
-    b_terms.add(new Term(4,1,4));
+    a_terms.add(new Term(2,1,1));
+    a_terms.add(new Term(-1,1,0));
 
     a = new Polynomial(a_terms);
     System.out.println("Polinomio a: " + a.toString());
-    b = new Polynomial(b_terms);
-    System.out.println("Polinomio b: " + b.toString());
 
-    divab = div.division(a,b);
-    System.out.println("Resultado:\n Cociente: "+ divab[0].toString()
-    + "\nResiduo: " + divab[1].toString() + "/(" + divab[2].toString() + ")");
+    Derivative derivative = new Derivative();
+    Polynomial deva = derivative.indefinite(a);
+    int[] defdeva = derivative.definite(1, 3, a);
+
+    System.out.println("Resultado Indefinido: " + deva.toString());
+    System.out.println("Resultado Definido: " + defdeva[0] + "/" + defdeva[1]);
+
+    System.out.println("Test no. 7 ==== INTEGRAL ====");
+
+    a_terms.clear();
+    b_terms.clear();
+
+    //Representando el polinomio x² + 2x - 1
+    a_terms.add(new Term(1,1,2));
+    a_terms.add(new Term(2,1,1));
+    a_terms.add(new Term(-1,1,0));
+    
+    a = new Polynomial(a_terms);
+    System.out.println("Polinomio a: " + a.toString());
+
+    Integral integral = new Integral();
+    Polynomial inta = integral.indefinite(a);
+    int[] definta = integral.definite(1, 3, a);
+
+    System.out.println("Resultado Indefinido: " + inta.toString());
+    System.out.println("Resultado Definido: " + definta[0] + "/" + definta[1]);
 
 
-    System.out.println("Test no. 5 ==== BINOMIAL DE NEWTON ====");
+    System.out.println("Test no. 8 ==== BINOMIAL DE NEWTON ====");
 
     Binomial bi = new Binomial();
 
@@ -210,7 +228,7 @@ public class Test{
     System.out.println("Polinomio desarrollado: " + nbinomial.toString());
 
 
-    System.out.println("Test no. 6 ==== SERIE GEOMETRICA ====");
+    System.out.println("Test no. 9 ==== SERIE GEOMETRICA ====");
 
     Geometric geo = new Geometric();
 
