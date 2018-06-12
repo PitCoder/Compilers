@@ -23,12 +23,12 @@ public class Machine{
 
   /*** INITIALIZING THE SYMBOL TABLE ***/
   private void init(){
-    String[] funcNames = {"geom", "bi", "nbi", "intgr", "derv"};
-    String[] callNames = {"geometric", "binomial", "nbinomial", "integral", "derivative"};
+    String[] funcNames = {"cbi", "geom", "bi", "nbi", "intgr", "derv"};
+    String[] callNames = {"coefbinomial","geometric", "binomial", "nbinomial", "integral", "derivative"};
     /* Then we install them */
     /* function: install, args: String[] callNames, String[] funcNames, Polynomial null, short 2 */
     for(int i=0; i<callNames.length; i++)
-      symbolTable.install(callNames[i], funcNames[i], null, (short) 2);
+      symbolTable.install(callNames[i], funcNames[i], (Polynomial) null, (short) 2);
   }
 
   /*** INITIALIZING THE STACK MACHINE ***/
@@ -90,13 +90,13 @@ public class Machine{
   }
 
   public void number(){
-    int n = Integer.parseInt(((InputText) program.elementAt(pc)).getText());
+    Integer n = Integer.parseInt(((InputText) program.elementAt(pc)).getText());
     pc = pc + 1;
     stack.push(n);
   }
 
   public void numParam(){
-    int n = Integer.parseInt(((InputText) program.elementAt(pc)).getText());
+    Integer n = Integer.parseInt(((InputText) program.elementAt(pc)).getText());
     pc = pc + 1;
     stack.push(n);
   }
@@ -125,25 +125,26 @@ public class Machine{
 
   /*** CODE FOR ASSIGNING A VALUE TO A VARIABLE ***/
   public void asgnVar(){
+    VerifyType vf = new VerifyType();
     InputText identifier = (InputText) stack.pop();                //Equivalent from obtaining from $1
-    Polynomial data = (Polynomial) stack.pop();                    //Equivalent from obtaining from $3
-    Symbol symbol = symbolTable.lookUpTable(identifier.getText()); //We verify if the symbol is already defined in the symbol table
+    Object obj = stack.pop();
 
-    if(symbol == null)
-      symbolTable.install(identifier.getText(), null, data, (short) 1);
-    else
-      symbolTable.update(symbol, data);
-  }
-
-  public void asgnNumVar(){
-    InputText identifier = (InputText) stack.pop();                //Equivalent from obtaining from $1
-    Polynomial data = (Polynomial) stack.pop();                    //Equivalent from obtaining from $3
-    Symbol symbol = symbolTable.lookUpTable(identifier.getText()); //We verify if the symbol is already defined in the symbol table
-
-    if(symbol == null)
-      symbolTable.install(identifier.getText(), null, data, (short) 1);
-    else
-      symbolTable.update(symbol, data);
+    if(vf.verify(obj).equals("int")){
+        int data = (int) obj; //Equivalent from obtaining from $3
+        Symbol symbol = symbolTable.lookUpTable(identifier.getText()); //We verify if the symbol is already defined in the symbol table
+        if(symbol == null)
+          symbolTable.install(identifier.getText(), null, data, (short) 1);
+        else
+          symbolTable.update(symbol, data);
+    }
+    else{
+        Polynomial data = (Polynomial) obj; //Equivalent from obtaining from $3}
+        Symbol symbol = symbolTable.lookUpTable(identifier.getText()); //We verify if the symbol is already defined in the symbol table
+        if(symbol == null)
+          symbolTable.install(identifier.getText(), null, data, (short) 1);
+        else
+          symbolTable.update(symbol, data);
+    }
   }
 
   /*** CODE TO RETRIEVE A VALUE FROM A VARIABLE ***/
@@ -152,7 +153,13 @@ public class Machine{
     Symbol symbol = symbolTable.lookUpTable(identifier.getText());
 
     if(symbol != null)
-      stack.push(symbol.getData());
+      if(symbol.getIData() == null){
+        stack.push(symbol.getPData());
+      }
+      else{
+        stack.push(symbol.getIData());
+      }
+
     else
       System.out.println("Variable not defined");
   }
@@ -164,7 +171,7 @@ public class Machine{
     /* We look on the table for the name */
     Symbol symbol =  symbolTable.lookUpTable(identifier.getText());
     /* Then we retrieve the number of parameters of the function */
-    int numparam = (int) stack.pop();
+    Integer numparam = (Integer) stack.pop();
     Class[] args = new Class[numparam];
     Object[] params = new Object[numparam];
     Polynomial p = new Polynomial();
@@ -172,8 +179,8 @@ public class Machine{
     for(int i=(numparam-1); i>=0; i--){
       //System.out.println(stack.peek().getClass());
       if(stack.peek().getClass().equals(Integer.class)){
-        args[i] = int.class;
-        params[i] = (int) stack.pop();
+        args[i] = Integer.class;
+        params[i] = (Integer) stack.pop();
       }
       else{
         args[i] = p.getClass();
@@ -183,24 +190,31 @@ public class Machine{
 
     /* Invocation of the the respective method */
     String funcName = symbol.getFuncName();
-    Polynomial result = new Polynomial();
     Functions functions = new Functions();
     Class fclass = functions.getClass();
+    VerifyType vf = new VerifyType();
 
     try{
       Method mbuiltin = fclass.getMethod(funcName, args);
-      result = (Polynomial) mbuiltin.invoke(functions, params);
+      Object obj = mbuiltin.invoke(functions, params);
+      if(vf.verify(obj).equals("polynomial")){
+        Polynomial result = (Polynomial) obj;
+        stack.push(result);
+      }
+      else{
+        Integer result = (Integer) obj;
+        stack.push(result);
+      }
     }
     catch (NoSuchMethodException e) {
-      System.out.println("Such method is not defined " + e);
+      e.printStackTrace();
     }
     catch (IllegalAccessException e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
     catch (InvocationTargetException e) {
       e.printStackTrace();
     }
-    stack.push(result);
   }
 
   /*** CODE FOR BASIC RELATIONAL CONDITIONS ***/
@@ -209,12 +223,12 @@ public class Machine{
 
     String typea, typeb;
     boolean result;
-    Object obja = stack.pop();
     Object objb = stack.pop();
+    Object obja = stack.pop();
 
     if(vf.verify(obja).equals("int") && vf.verify(objb).equals("int")) {
-      int a = (int) obja;
-      int b = (int) objb;
+      Integer a = (Integer) obja;
+      Integer b = (Integer) objb;
       if(a == b)
         result = true;
       else
@@ -231,12 +245,12 @@ public class Machine{
 
     String typea, typeb;
     boolean result;
-    Object obja = stack.pop();
     Object objb = stack.pop();
+    Object obja = stack.pop();
 
     if(vf.verify(obja).equals("int") && vf.verify(objb).equals("int")) {
-      int a = (int) obja;
-      int b = (int) objb;
+      Integer a = (Integer) obja;
+      Integer b = (Integer) objb;
       if(a != b)
         result = true;
       else
@@ -253,12 +267,12 @@ public class Machine{
 
     String typea, typeb;
     boolean result;
-    Object obja = stack.pop();
     Object objb = stack.pop();
+    Object obja = stack.pop();
 
     if(vf.verify(obja).equals("int") && vf.verify(objb).equals("int")) {
-      int a = (int) obja;
-      int b = (int) objb;
+      Integer a = (Integer) obja;
+      Integer b = (Integer) objb;
       if(a > b)
         result = true;
       else
@@ -275,12 +289,12 @@ public class Machine{
 
     String typea, typeb;
     boolean result;
-    Object obja = stack.pop();
     Object objb = stack.pop();
+    Object obja = stack.pop();
 
     if(vf.verify(obja).equals("int") && vf.verify(objb).equals("int")) {
-      int a = (int) obja;
-      int b = (int) objb;
+      Integer a = (Integer) obja;
+      Integer b = (Integer) objb;
       if(a < b)
         result = true;
       else
@@ -297,12 +311,12 @@ public class Machine{
 
     String typea, typeb;
     boolean result;
-    Object obja = stack.pop();
     Object objb = stack.pop();
+    Object obja = stack.pop();
 
     if(vf.verify(obja).equals("int") && vf.verify(objb).equals("int")) {
-      int a = (int) obja;
-      int b = (int) objb;
+      Integer a = (Integer) obja;
+      Integer b = (Integer) objb;
       if(a >= b)
         result = true;
       else
@@ -319,12 +333,12 @@ public class Machine{
 
     String typea, typeb;
     boolean result;
-    Object obja = stack.pop();
     Object objb = stack.pop();
+    Object obja = stack.pop();
 
     if(vf.verify(obja).equals("int") && vf.verify(objb).equals("int")) {
-      int a = (int) obja;
-      int b = (int) objb;
+      Integer a = (Integer) obja;
+      Integer b = (Integer) objb;
       if(a <= b)
         result = true;
       else
@@ -344,13 +358,13 @@ public class Machine{
     Object obja = stack.pop();
 
     if(vf.verify(obja).equals("int") && vf.verify(objb).equals("int")) {
-      int a,b;
-      a = (int) obja;
-      b = (int) objb;
+      Integer a,b;
+      a = (Integer) obja;
+      b = (Integer) objb;
       stack.push(a + b);
     }
     else if(vf.verify(obja).equals("int") && vf.verify(objb).equals("polynomial")){
-      int x = (int) obja;
+      Integer x = (Integer) obja;
       Polynomial a,b;
       a = new Polynomial();
       a.addTerm(new Term(x,1,0));
@@ -359,7 +373,7 @@ public class Machine{
       stack.push(s.sum(a,b));
     }
     else if(vf.verify(obja).equals("polynomial") && vf.verify(objb).equals("int")){
-      int x = (int) objb;
+      Integer x = (Integer) objb;
       Polynomial a,b;
       b = new Polynomial();
       b.addTerm(new Term(x,1,0));
@@ -382,13 +396,13 @@ public class Machine{
     Object obja = stack.pop();
 
     if(vf.verify(obja).equals("int") && vf.verify(objb).equals("int")) {
-      int a,b;
-      a = (int) obja;
-      b = (int) objb;
+      Integer a,b;
+      a = (Integer) obja;
+      b = (Integer) objb;
       stack.push(a - b);
     }
     else if(vf.verify(obja).equals("int") && vf.verify(objb).equals("polynomial")){
-      int x = (int) obja;
+      Integer x = (Integer) obja;
       Polynomial a,b;
       a = new Polynomial();
       a.addTerm(new Term(x,1,0));
@@ -397,7 +411,7 @@ public class Machine{
       stack.push(sb.sub(a,b));
     }
     else if(vf.verify(obja).equals("polynomial") && vf.verify(objb).equals("int")){
-      int x = (int) objb;
+      Integer x = (Integer) objb;
       Polynomial a,b;
       b = new Polynomial();
       b.addTerm(new Term(x,1,0));
@@ -420,13 +434,13 @@ public class Machine{
     Object obja = stack.pop();
 
     if(vf.verify(obja).equals("int") && vf.verify(objb).equals("int")) {
-      int a,b;
-      a = (int) obja;
-      b = (int) objb;
+      Integer a,b;
+      a = (Integer) obja;
+      b = (Integer) objb;
       stack.push(a * b);
     }
     else if(vf.verify(obja).equals("int") && vf.verify(objb).equals("polynomial")){
-      int x = (int) obja;
+      Integer x = (Integer) obja;
       Polynomial a,b;
       a = new Polynomial();
       a.addTerm(new Term(x,1,0));
@@ -435,7 +449,7 @@ public class Machine{
       stack.push(mul.multiplyTwo(a,b));
     }
     else if(vf.verify(obja).equals("polynomial") && vf.verify(objb).equals("int")){
-      int x = (int) objb;
+      Integer x = (Integer) objb;
       Polynomial a,b;
       b = new Polynomial();
       b.addTerm(new Term(x,1,0));
@@ -458,13 +472,13 @@ public class Machine{
     Object obja = stack.pop();
 
     if(vf.verify(obja).equals("int") && vf.verify(objb).equals("int")) {
-      int a,b;
-      a = (int) obja;
-      b = (int) objb;
+      Integer a,b;
+      b = (Integer) objb;
+      a = (Integer) obja;
       stack.push(a / b);
     }
     else if(vf.verify(obja).equals("int") && vf.verify(objb).equals("polynomial")){
-      int x = (int) obja;
+      Integer x = (Integer) obja;
       Polynomial a,b;
       Polynomial[] result;
       a = new Polynomial();
@@ -475,7 +489,7 @@ public class Machine{
       stack.push(result[0]);
     }
     else if(vf.verify(obja).equals("polynomial") && vf.verify(objb).equals("int")){
-      int x = (int) objb;
+      Integer x = (Integer) objb;
       Polynomial a,b;
       Polynomial[] result;
       b = new Polynomial();
@@ -502,13 +516,13 @@ public class Machine{
     Object obja = stack.pop();
 
     if(vf.verify(obja).equals("int") && vf.verify(objb).equals("int")) {
-      int a,b;
-      a = (int) obja;
-      b = (int) objb;
+      Integer a,b;
+      a = (Integer) obja;
+      b = (Integer) objb;
       stack.push(a % b);
     }
     else if(vf.verify(obja).equals("int") && vf.verify(objb).equals("polynomial")){
-      int x = (int) obja;
+      int x = (Integer) obja;
       Polynomial a,b;
       Polynomial[] result;
       a = new Polynomial();
@@ -519,7 +533,7 @@ public class Machine{
       stack.push(result[1]);
     }
     else if(vf.verify(obja).equals("polynomial") && vf.verify(objb).equals("int")){
-      int x = (int) objb;
+      Integer x = (Integer) objb;
       Polynomial a,b;
       Polynomial[] result;
       b = new Polynomial();
@@ -547,15 +561,15 @@ public class Machine{
 
     if(vf.verify(obja).equals("int") && vf.verify(objb).equals("int")) {
       double a,b;
-      a = (double) obja;
-      b = (double) objb;
+      a = ((int) obja) / ((double) 1);
+      b = ((int) objb) / ((double) 1);
       stack.push((int)Math.pow(a,b));
     }
     else if(vf.verify(obja).equals("polynomial") && vf.verify(objb).equals("int")){
       Polynomial p;
-      int n;
-      n = (int) obja;
-      p = (Polynomial) objb;
+      Integer n;
+      n = (Integer) objb;
+      p = (Polynomial) obja;
       Pow pow = new Pow();
       stack.push(pow.power(p,n));
     }
@@ -568,15 +582,57 @@ public class Machine{
   public void printAsignment(){
     System.out.print("Result: ");
     symbolTable.print();
-    System.out.print("\nExpression: ");
+    //System.out.print("\nExpression: ");
   }
 
-  public void printPolynomial(){
-    Polynomial result = (Polynomial) stack.pop();
-    result.reduce();
-    System.out.println("Result: " + result.toString() + "\n");
-    System.out.print("Expression: ");
+  public void printExpression(){
+    VerifyType vf = new VerifyType();
+    Object obj = stack.pop();
+
+    if(vf.verify(obj).equals("int")) {
+      Integer result = (Integer) obj;
+      System.out.println("Result (Integer): " + result + "\n");
+    }
+    else {
+      Polynomial result = (Polynomial) obj;
+      result.reduce();
+      System.out.println("Result (Polynomial): " + result.toString() + "\n");
+    }
   }
+
+
+  /* Code of while */
+  public void whileCode(){
+    boolean decision;
+    int savepc = this.pc;
+    execute(savepc + 2);	/* condition */
+    decision = ((Boolean)stack.pop()).booleanValue();
+
+    while(decision) {
+      execute(((Integer)program.elementAt(savepc)).intValue()); // statement
+      execute(savepc + 2); // condition
+      decision = ((Boolean)stack.pop()).booleanValue();
+    }
+
+    pc = ((Integer)program.elementAt(savepc + 1)).intValue();
+   }
+
+   /* Code of if */
+   public void ifCode(){
+     boolean decision;
+     int savepc = pc;
+
+     execute(savepc + 3); /* Condition */
+     decision = ((Boolean)stack.pop()).booleanValue();
+
+     if(decision){
+       execute(((Integer)program.elementAt(savepc)).intValue()); /* stm1 */
+     }
+     else if(!program.elementAt(savepc + 1).toString().equals("STOP")) {
+       execute(((Integer)program.elementAt(savepc + 1)).intValue()); /* stm2 */
+     }
+     pc = ((Integer)program.elementAt(savepc + 2)).intValue();
+    }
 
   /***** HOC 4: CODE EXECUTION STAGE ***/
   /*** Method overloading ***/
@@ -597,11 +653,13 @@ public class Machine{
           System.out.println("PC = " + pc + ". Instruction: " + program.elementAt(pc));
         }
       }
+      System.out.println("\n\n.:: Executing Program ::. ");
     }
 
-    System.out.println("\n\n.:: Executing Program ::. ");
+    this.pc = offset;
+    boolean execute = true;
     /*** Loop forever ***/
-    for(;;){
+    while(execute){
         /* We will try to execute the code defined by the functions above */
         try{
           //System.out.println("Executing pc: " + pc);

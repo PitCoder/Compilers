@@ -1,0 +1,27 @@
+n = 5
+k = 0
+c = 0
+b = 0
+v = [0x0]
+w = [0x0]
+p = [0x0]
+a = [0x0]
+d = [0x0]
+
+while(k <= n){b = n - k; c = coefbinomial(n,k); v = [1x1 - 1x0] ^ k; print v; w = [1x1 + 1x0] ^ b; print w; c = c ^ 2; print c; d = c * w * v; print d; p = p + d; k = k + 1; print p;}
+
+a = [1/2x0] ^ n
+p = p / a
+
+n = 5
+c = 0
+b = 0
+v = [0x0]
+w = [0x0]
+p = [0x0]
+a = [0x0]
+d = [0x0]
+
+for(k = 0 : (k < 5) : k = k + 1 ){b = n - k; c = coefbinomial(n,k); v = [1x1 - 1x0] ^ k; print v; w = [1x1 + 1x0] ^ b; print w; c = c ^ 2; print c; d = c * w * v; print d; p = p + d; k = k + 1; print p;}
+a = [1/2x0] ^ n - 1
+p = p / a
