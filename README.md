@@ -17,6 +17,17 @@ Is a program that translates and executable program in one language into an exec
   <img src="https://codon.com/images/compilers-for-free/compilation.gif" alt="Compilers"/>
 </p>
 
+#### What is an Interpreter?
+Is a program that reads an executable program and produces the results of running that program. Usually, this involves executing the source program in somefashion.
+
+<p align="center">
+  <img src="https://codon.com/images/compilers-for-free/interpretation.gif" alt="Interpretation"/>
+</p>
+
+<p align="center">
+  <img src="https://codon.com/images/compilers-for-free/venn-diagram.gif" alt="Difference"/>
+</p>
+
 #### Why study a compiler construction?
 Compiler construction is a microcosm of computer science where things like artificial intelligence, algorithms, computational theory, sistems and computer architectures all come together. Even if compilers are a well study subject, they are constantly changing by adding new features to pose new problems, changing costs and re-engineering of old solutions.
 
@@ -35,16 +46,18 @@ All these topics are implemented in the Hoc folders, where an implementation of 
   
   
 ### GramBot (On Site Programable Vehicle)
-
-#### What is an Interpreter?
-Is a program that reads an executable program and produces the results of running that program. Usually, this involves executing the source program in somefashion.
+A robot vehicle which can be remotely programmable on site from a desktop application, the robot uses its own interpreter allowing it to be customizable by modifying robot’s command set in an easy way. Hardware components of the robot were programed using C++ and Arduino, middleware communication using Python 3 and the interpreter using Java along with Lex and Yacc.
 
 <p align="center">
-  <img src="https://codon.com/images/compilers-for-free/interpretation.gif" alt="Interpretation"/>
+  <img src="https://raw.githubusercontent.com/PitCoder/Compilers/master/Img/IMG_4836.JPG" alt="Grambot"/>
 </p>
 
+#### Codebase
+Grambot's codebase is within the folder "Grambot/codebase/", the folder contains the frontend and backend of the application: interface, interpreter and server comunication in Java, middleware communication in Python and finally hardware implementation in Arduino files.  
+
+#### Demonstration
 <p align="center">
-  <img src="https://codon.com/images/compilers-for-free/venn-diagram.gif" alt="Difference"/>
+  <img src="https://raw.githubusercontent.com/PitCoder/Compilers/master/Img/demo.gif" alt="Demostration"/>
 </p>
 
 ### Team
