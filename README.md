@@ -12,10 +12,18 @@
 
 > This is the team that made Grambot possible:
 
-| <a href="http://fvcproductions.com" target="_blank">**FVCproductions**</a> | <a href="http://fvcproductions.com" target="_blank">**FVCproductions**</a> | <a href="http://fvcproductions.com" target="_blank">**FVCproductions**</a> |
+| <a href="https://github.com/ccruz182" target="_blank">**César Cruz Arredondo**</a> | <a href="https://github.com/jonathanoleaz" target="_blank">**Jonathan Olea Zuñiga**</a> | <a href="http://fvcproductions.com" target="_blank">**Luis Figeroa Romero**</a> |
 | :---: |:---:| :---:|
-| [![César Cruz Arredondo](https://avatars1.githubusercontent.com/u/28882910?s=400&v=4?s=200)](https://github.com/ccruz182)    | [![FVCproductions](https://avatars1.githubusercontent.com/u/4284691?v=3&s=200)](http://fvcproductions.com) | [![FVCproductions](https://avatars1.githubusercontent.com/u/4284691?v=3&s=200)](http://fvcproductions.com)  |
-| <a href="http://github.com/fvcproductions" target="_blank">`github.com/fvcproductions`</a> | <a href="http://github.com/fvcproductions" target="_blank">`github.com/fvcproductions`</a> | <a href="http://github.com/fvcproductions" target="_blank">`github.com/fvcproductions`</a> |
+| [![César Cruz Arredondo](https://avatars1.githubusercontent.com/u/28882910?s=200&v=2)](https://github.com/ccruz182)    | [![Jonathan Olea Zuñiga](https://avatars3.githubusercontent.com/u/21295348?s=200&v=2)](https://github.com/jonathanoleaz) | [![Luis Figeroa Romero](https://avatars1.githubusercontent.com/u/4284691?v=3&s=200)](http://fvcproductions.com)  |
+| <p>Python, Java and Arduino Developer</p> | <p>Java and Python Developer</p> | <p>Java and Python Developer</p> |
 
-- You can just grab their GitHub profile image URL
-- You should probably resize their picture using `?s=200` at the end of the image URL.
+### License
+
+[![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://badges.mit-license.org)
+
+- **[MIT license](http://opensource.org/licenses/mit-license.php)**
+- Copyright 2018 © <a href="https://github.com/PitCoder" target="_blank">Eric Alejandro López Ayala</a>
+<a href="https://github.com/ccruz182" target="_blank">**César Cruz Arredondo**</a>
+<a href="https://github.com/jonathanoleaz" target="_blank">**Jonathan Olea Zuñiga**</a>.
+
+
