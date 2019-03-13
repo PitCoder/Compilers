@@ -1,0 +1,25 @@
+/*This is an example of execution for HOC5 Coordenadas*/
+/*guión de pruebas*/
+jonathan@jonathan-VirtualBox:~/Descargas/hoc5Unif$ java Parser
+HOC 5 Simple calc
+Expression: crdvar=c n n n [ne]
+
+crdpor=c s s s [so]
+
+crdnueva=crdvar+crdpor
+
+c s + crdnueva
+Expression: crdpor=c e e [no]  
+c s + crdpor
+crdnueva= crdpor + crdpor
+c s + crdnueva
+Expression: i=0
+Expression: i
+Expression: while(i#=5) {i=i+1 crdnueva=crdnueva + crdpor}
+
+Expression: c s + crdnueva
+
+
+
+tipo de dato tarjeta y su RN
+los atributos booleanos de permisos

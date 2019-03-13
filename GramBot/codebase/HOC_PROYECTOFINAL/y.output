@@ -1,0 +1,2798 @@
+   0  $accept : list $end
+
+   1  list :
+   2       | list '\n'
+   3       | list defn ';'
+   4       | list asgn '\n'
+   5       | list stmt '\n'
+   6       | list exp '\n'
+   7       | list asigncoord '\n'
+   8       | list expcoord '\n'
+
+   9  asgn : VAR '=' exp
+
+  10  stmt : exp
+  11       | RETURN exp
+  12       | procname begin '(' arglist ')'
+  13       | PRINT exp
+  14       | asigncoord
+  15       | expcoord
+  16       | while cond stmt end
+  17       | if cond stmt end
+  18       | if cond stmt end ELSE stmt end
+  19       | for '(' inicio ';' cond ';' inc ')' stmt end
+  20       | '{' stmtlist '}'
+
+  21  cond : '(' exp ')'
+
+  22  while : WHILE
+
+  23  if : IF
+
+  24  for : FOR
+
+  25  inicio : exp
+
+  26  inc : exp
+
+  27  end :
+
+  28  stmtlist :
+  29           | stmtlist '\n'
+  30           | stmtlist stmt
+
+  31  defn : PROC procname '(' ')' stmt
+  32       | FUNC procname '(' ')' stmt
+
+  33  procname : VAR
+  34           | FUNCTION
+  35           | PROCEDURE
+
+  36  arglist :
+  37          | exp
+  38          | arglist ',' exp
+
+  39  begin :
+
+  40  exp : NUMBER
+  41      | VAR
+  42      | ARG
+  43      | procname begin '(' arglist ')'
+  44      | asgn
+  45      | BLTIN '(' exp ')'
+  46      | exp '+' exp
+  47      | exp '-' exp
+  48      | exp '*' exp
+  49      | exp '/' exp
+  50      | exp '^' exp
+  51      | '(' exp ')'
+  52      | exp EQ exp
+  53      | exp NEQ exp
+  54      | exp GT exp
+  55      | exp GE exp
+  56      | exp LT exp
+  57      | exp LE exp
+
+  58  asigncoord : VARCRD '=' binstr
+
+  59  binstr : binstr instr
+  60         | 'c'
+  61         | expcoord
+
+  62  expcoord : expcoord '+' expcoord
+  63           | expcoord '-' expcoord
+  64           | sec
+
+  65  sec : 'c'
+  66      | sec instr
+  67      | VARCRD
+
+  68  instr : 'e'
+  69        | 'n'
+  70        | 'o'
+  71        | 's'
+  72        | 'u'
+  73        | 'd'
+  74        | '&'
+  75        | '%'
+  76        | '#'
+  77        | '"'
+
+state 0
+	$accept : . list $end  (0)
+	list : .  (1)
+
+	.  reduce 1
+
+	list  goto 1
+
+
+state 1
+	$accept : list . $end  (0)
+	list : list . '\n'  (2)
+	list : list . defn ';'  (3)
+	list : list . asgn '\n'  (4)
+	list : list . stmt '\n'  (5)
+	list : list . exp '\n'  (6)
+	list : list . asigncoord '\n'  (7)
+	list : list . expcoord '\n'  (8)
+
+	$end  accept
+	BLTIN  shift 2
+	IF  shift 3
+	WHILE  shift 4
+	FOR  shift 5
+	PRINT  shift 6
+	FUNC  shift 7
+	PROC  shift 8
+	RETURN  shift 9
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	VARCRD  shift 15
+	'\n'  shift 16
+	'('  shift 17
+	'{'  shift 18
+	'c'  shift 19
+	.  error
+
+	defn  goto 20
+	asgn  goto 21
+	stmt  goto 22
+	exp  goto 23
+	asigncoord  goto 24
+	expcoord  goto 25
+	procname  goto 26
+	while  goto 27
+	if  goto 28
+	for  goto 29
+	sec  goto 30
+
+
+state 2
+	exp : BLTIN . '(' exp ')'  (45)
+
+	'('  shift 31
+	.  error
+
+
+state 3
+	if : IF .  (23)
+
+	.  reduce 23
+
+
+state 4
+	while : WHILE .  (22)
+
+	.  reduce 22
+
+
+state 5
+	for : FOR .  (24)
+
+	.  reduce 24
+
+
+state 6
+	stmt : PRINT . exp  (13)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 33
+	procname  goto 34
+
+
+state 7
+	defn : FUNC . procname '(' ')' stmt  (32)
+
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	VAR  shift 35
+	.  error
+
+	procname  goto 36
+
+
+state 8
+	defn : PROC . procname '(' ')' stmt  (31)
+
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	VAR  shift 35
+	.  error
+
+	procname  goto 37
+
+
+state 9
+	stmt : RETURN . exp  (11)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 38
+	procname  goto 34
+
+
+state 10
+	procname : FUNCTION .  (34)
+
+	.  reduce 34
+
+
+state 11
+	procname : PROCEDURE .  (35)
+
+	.  reduce 35
+
+
+state 12
+	exp : ARG .  (42)
+
+	.  reduce 42
+
+
+state 13
+	exp : NUMBER .  (40)
+
+	.  reduce 40
+
+
+14: reduce/reduce conflict (reduce 33, reduce 41) on '('
+state 14
+	asgn : VAR . '=' exp  (9)
+	procname : VAR .  (33)
+	exp : VAR .  (41)
+
+	'='  shift 39
+	BLTIN  reduce 41
+	IF  reduce 41
+	ELSE  reduce 41
+	WHILE  reduce 41
+	FOR  reduce 41
+	PRINT  reduce 41
+	RETURN  reduce 41
+	EQ  reduce 41
+	NEQ  reduce 41
+	GT  reduce 41
+	GE  reduce 41
+	LT  reduce 41
+	LE  reduce 41
+	FUNCTION  reduce 41
+	PROCEDURE  reduce 41
+	ARG  reduce 41
+	NUMBER  reduce 41
+	VAR  reduce 41
+	VARCRD  reduce 41
+	'-'  reduce 41
+	'+'  reduce 41
+	'*'  reduce 41
+	'/'  reduce 41
+	'\n'  reduce 41
+	';'  reduce 41
+	'('  reduce 33
+	')'  reduce 41
+	'{'  reduce 41
+	'}'  reduce 41
+	','  reduce 41
+	'^'  reduce 41
+	'c'  reduce 41
+
+
+state 15
+	asigncoord : VARCRD . '=' binstr  (58)
+	sec : VARCRD .  (67)
+
+	'='  shift 40
+	BLTIN  reduce 67
+	IF  reduce 67
+	ELSE  reduce 67
+	WHILE  reduce 67
+	FOR  reduce 67
+	PRINT  reduce 67
+	RETURN  reduce 67
+	FUNCTION  reduce 67
+	PROCEDURE  reduce 67
+	ARG  reduce 67
+	NUMBER  reduce 67
+	VAR  reduce 67
+	VARCRD  reduce 67
+	'-'  reduce 67
+	'+'  reduce 67
+	'\n'  reduce 67
+	';'  reduce 67
+	'('  reduce 67
+	'{'  reduce 67
+	'}'  reduce 67
+	'c'  reduce 67
+	'e'  reduce 67
+	'n'  reduce 67
+	'o'  reduce 67
+	's'  reduce 67
+	'u'  reduce 67
+	'd'  reduce 67
+	'&'  reduce 67
+	'%'  reduce 67
+	'#'  reduce 67
+	'"'  reduce 67
+
+
+state 16
+	list : list '\n' .  (2)
+
+	.  reduce 2
+
+
+state 17
+	exp : '(' . exp ')'  (51)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 41
+	procname  goto 34
+
+
+state 18
+	stmt : '{' . stmtlist '}'  (20)
+	stmtlist : .  (28)
+
+	.  reduce 28
+
+	stmtlist  goto 42
+
+
+state 19
+	sec : 'c' .  (65)
+
+	.  reduce 65
+
+
+state 20
+	list : list defn . ';'  (3)
+
+	';'  shift 43
+	.  error
+
+
+21: shift/reduce conflict (shift 44, reduce 44) on '\n'
+state 21
+	list : list asgn . '\n'  (4)
+	exp : asgn .  (44)
+
+	'\n'  shift 44
+	EQ  reduce 44
+	NEQ  reduce 44
+	GT  reduce 44
+	GE  reduce 44
+	LT  reduce 44
+	LE  reduce 44
+	'-'  reduce 44
+	'+'  reduce 44
+	'*'  reduce 44
+	'/'  reduce 44
+	'^'  reduce 44
+
+
+state 22
+	list : list stmt . '\n'  (5)
+
+	'\n'  shift 45
+	.  error
+
+
+23: shift/reduce conflict (shift 56, reduce 10) on '\n'
+state 23
+	list : list exp . '\n'  (6)
+	stmt : exp .  (10)
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	'\n'  shift 56
+	'^'  shift 57
+
+
+24: shift/reduce conflict (shift 58, reduce 14) on '\n'
+state 24
+	list : list asigncoord . '\n'  (7)
+	stmt : asigncoord .  (14)
+
+	'\n'  shift 58
+
+
+25: shift/reduce conflict (shift 61, reduce 15) on '\n'
+state 25
+	list : list expcoord . '\n'  (8)
+	stmt : expcoord .  (15)
+	expcoord : expcoord . '+' expcoord  (62)
+	expcoord : expcoord . '-' expcoord  (63)
+
+	'-'  shift 59
+	'+'  shift 60
+	'\n'  shift 61
+
+
+state 26
+	stmt : procname . begin '(' arglist ')'  (12)
+	exp : procname . begin '(' arglist ')'  (43)
+	begin : .  (39)
+
+	.  reduce 39
+
+	begin  goto 62
+
+
+state 27
+	stmt : while . cond stmt end  (16)
+
+	'('  shift 63
+	.  error
+
+	cond  goto 64
+
+
+state 28
+	stmt : if . cond stmt end  (17)
+	stmt : if . cond stmt end ELSE stmt end  (18)
+
+	'('  shift 63
+	.  error
+
+	cond  goto 65
+
+
+state 29
+	stmt : for . '(' inicio ';' cond ';' inc ')' stmt end  (19)
+
+	'('  shift 66
+	.  error
+
+
+30: shift/reduce conflict (shift 67, reduce 64) on 'e'
+30: shift/reduce conflict (shift 68, reduce 64) on 'n'
+30: shift/reduce conflict (shift 69, reduce 64) on 'o'
+30: shift/reduce conflict (shift 70, reduce 64) on 's'
+30: shift/reduce conflict (shift 71, reduce 64) on 'u'
+30: shift/reduce conflict (shift 72, reduce 64) on 'd'
+30: shift/reduce conflict (shift 73, reduce 64) on '&'
+30: shift/reduce conflict (shift 74, reduce 64) on '%'
+30: shift/reduce conflict (shift 75, reduce 64) on '#'
+30: shift/reduce conflict (shift 76, reduce 64) on '"'
+state 30
+	expcoord : sec .  (64)
+	sec : sec . instr  (66)
+
+	'e'  shift 67
+	'n'  shift 68
+	'o'  shift 69
+	's'  shift 70
+	'u'  shift 71
+	'd'  shift 72
+	'&'  shift 73
+	'%'  shift 74
+	'#'  shift 75
+	'"'  shift 76
+	BLTIN  reduce 64
+	IF  reduce 64
+	ELSE  reduce 64
+	WHILE  reduce 64
+	FOR  reduce 64
+	PRINT  reduce 64
+	RETURN  reduce 64
+	FUNCTION  reduce 64
+	PROCEDURE  reduce 64
+	ARG  reduce 64
+	NUMBER  reduce 64
+	VAR  reduce 64
+	VARCRD  reduce 64
+	'-'  reduce 64
+	'+'  reduce 64
+	'\n'  reduce 64
+	';'  reduce 64
+	'('  reduce 64
+	'{'  reduce 64
+	'}'  reduce 64
+	'c'  reduce 64
+
+	instr  goto 77
+
+
+state 31
+	exp : BLTIN '(' . exp ')'  (45)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 78
+	procname  goto 34
+
+
+state 32
+	exp : asgn .  (44)
+
+	.  reduce 44
+
+
+state 33
+	stmt : PRINT exp .  (13)
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	BLTIN  reduce 13
+	IF  reduce 13
+	ELSE  reduce 13
+	WHILE  reduce 13
+	FOR  reduce 13
+	PRINT  reduce 13
+	RETURN  reduce 13
+	FUNCTION  reduce 13
+	PROCEDURE  reduce 13
+	ARG  reduce 13
+	NUMBER  reduce 13
+	VAR  reduce 13
+	VARCRD  reduce 13
+	'\n'  reduce 13
+	';'  reduce 13
+	'('  reduce 13
+	'{'  reduce 13
+	'}'  reduce 13
+	'c'  reduce 13
+
+
+state 34
+	exp : procname . begin '(' arglist ')'  (43)
+	begin : .  (39)
+
+	.  reduce 39
+
+	begin  goto 79
+
+
+state 35
+	procname : VAR .  (33)
+
+	.  reduce 33
+
+
+state 36
+	defn : FUNC procname . '(' ')' stmt  (32)
+
+	'('  shift 80
+	.  error
+
+
+state 37
+	defn : PROC procname . '(' ')' stmt  (31)
+
+	'('  shift 81
+	.  error
+
+
+state 38
+	stmt : RETURN exp .  (11)
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	BLTIN  reduce 11
+	IF  reduce 11
+	ELSE  reduce 11
+	WHILE  reduce 11
+	FOR  reduce 11
+	PRINT  reduce 11
+	RETURN  reduce 11
+	FUNCTION  reduce 11
+	PROCEDURE  reduce 11
+	ARG  reduce 11
+	NUMBER  reduce 11
+	VAR  reduce 11
+	VARCRD  reduce 11
+	'\n'  reduce 11
+	';'  reduce 11
+	'('  reduce 11
+	'{'  reduce 11
+	'}'  reduce 11
+	'c'  reduce 11
+
+
+state 39
+	asgn : VAR '=' . exp  (9)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 82
+	procname  goto 34
+
+
+state 40
+	asigncoord : VARCRD '=' . binstr  (58)
+
+	VARCRD  shift 83
+	'c'  shift 84
+	.  error
+
+	expcoord  goto 85
+	binstr  goto 86
+	sec  goto 30
+
+
+state 41
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : '(' exp . ')'  (51)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	')'  shift 87
+	'^'  shift 57
+	.  error
+
+
+state 42
+	stmt : '{' stmtlist . '}'  (20)
+	stmtlist : stmtlist . '\n'  (29)
+	stmtlist : stmtlist . stmt  (30)
+
+	BLTIN  shift 2
+	IF  shift 3
+	WHILE  shift 4
+	FOR  shift 5
+	PRINT  shift 6
+	RETURN  shift 9
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	VARCRD  shift 15
+	'\n'  shift 88
+	'('  shift 17
+	'{'  shift 18
+	'}'  shift 89
+	'c'  shift 19
+	.  error
+
+	asgn  goto 32
+	stmt  goto 90
+	exp  goto 91
+	asigncoord  goto 92
+	expcoord  goto 93
+	procname  goto 26
+	while  goto 27
+	if  goto 28
+	for  goto 29
+	sec  goto 30
+
+
+state 43
+	list : list defn ';' .  (3)
+
+	.  reduce 3
+
+
+state 44
+	list : list asgn '\n' .  (4)
+
+	.  reduce 4
+
+
+state 45
+	list : list stmt '\n' .  (5)
+
+	.  reduce 5
+
+
+state 46
+	exp : exp EQ . exp  (52)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 94
+	procname  goto 34
+
+
+state 47
+	exp : exp NEQ . exp  (53)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 95
+	procname  goto 34
+
+
+state 48
+	exp : exp GT . exp  (54)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 96
+	procname  goto 34
+
+
+state 49
+	exp : exp GE . exp  (55)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 97
+	procname  goto 34
+
+
+state 50
+	exp : exp LT . exp  (56)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 98
+	procname  goto 34
+
+
+state 51
+	exp : exp LE . exp  (57)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 99
+	procname  goto 34
+
+
+state 52
+	exp : exp '-' . exp  (47)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 100
+	procname  goto 34
+
+
+state 53
+	exp : exp '+' . exp  (46)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 101
+	procname  goto 34
+
+
+state 54
+	exp : exp '*' . exp  (48)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 102
+	procname  goto 34
+
+
+state 55
+	exp : exp '/' . exp  (49)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 103
+	procname  goto 34
+
+
+state 56
+	list : list exp '\n' .  (6)
+
+	.  reduce 6
+
+
+state 57
+	exp : exp '^' . exp  (50)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 104
+	procname  goto 34
+
+
+state 58
+	list : list asigncoord '\n' .  (7)
+
+	.  reduce 7
+
+
+state 59
+	expcoord : expcoord '-' . expcoord  (63)
+
+	VARCRD  shift 83
+	'c'  shift 19
+	.  error
+
+	expcoord  goto 105
+	sec  goto 30
+
+
+state 60
+	expcoord : expcoord '+' . expcoord  (62)
+
+	VARCRD  shift 83
+	'c'  shift 19
+	.  error
+
+	expcoord  goto 106
+	sec  goto 30
+
+
+state 61
+	list : list expcoord '\n' .  (8)
+
+	.  reduce 8
+
+
+state 62
+	stmt : procname begin . '(' arglist ')'  (12)
+	exp : procname begin . '(' arglist ')'  (43)
+
+	'('  shift 107
+	.  error
+
+
+state 63
+	cond : '(' . exp ')'  (21)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 108
+	procname  goto 34
+
+
+state 64
+	stmt : while cond . stmt end  (16)
+
+	BLTIN  shift 2
+	IF  shift 3
+	WHILE  shift 4
+	FOR  shift 5
+	PRINT  shift 6
+	RETURN  shift 9
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	VARCRD  shift 15
+	'('  shift 17
+	'{'  shift 18
+	'c'  shift 19
+	.  error
+
+	asgn  goto 32
+	stmt  goto 109
+	exp  goto 91
+	asigncoord  goto 92
+	expcoord  goto 93
+	procname  goto 26
+	while  goto 27
+	if  goto 28
+	for  goto 29
+	sec  goto 30
+
+
+state 65
+	stmt : if cond . stmt end  (17)
+	stmt : if cond . stmt end ELSE stmt end  (18)
+
+	BLTIN  shift 2
+	IF  shift 3
+	WHILE  shift 4
+	FOR  shift 5
+	PRINT  shift 6
+	RETURN  shift 9
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	VARCRD  shift 15
+	'('  shift 17
+	'{'  shift 18
+	'c'  shift 19
+	.  error
+
+	asgn  goto 32
+	stmt  goto 110
+	exp  goto 91
+	asigncoord  goto 92
+	expcoord  goto 93
+	procname  goto 26
+	while  goto 27
+	if  goto 28
+	for  goto 29
+	sec  goto 30
+
+
+state 66
+	stmt : for '(' . inicio ';' cond ';' inc ')' stmt end  (19)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 111
+	procname  goto 34
+	inicio  goto 112
+
+
+state 67
+	instr : 'e' .  (68)
+
+	.  reduce 68
+
+
+state 68
+	instr : 'n' .  (69)
+
+	.  reduce 69
+
+
+state 69
+	instr : 'o' .  (70)
+
+	.  reduce 70
+
+
+state 70
+	instr : 's' .  (71)
+
+	.  reduce 71
+
+
+state 71
+	instr : 'u' .  (72)
+
+	.  reduce 72
+
+
+state 72
+	instr : 'd' .  (73)
+
+	.  reduce 73
+
+
+state 73
+	instr : '&' .  (74)
+
+	.  reduce 74
+
+
+state 74
+	instr : '%' .  (75)
+
+	.  reduce 75
+
+
+state 75
+	instr : '#' .  (76)
+
+	.  reduce 76
+
+
+state 76
+	instr : '"' .  (77)
+
+	.  reduce 77
+
+
+state 77
+	sec : sec instr .  (66)
+
+	.  reduce 66
+
+
+state 78
+	exp : BLTIN '(' exp . ')'  (45)
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	')'  shift 113
+	'^'  shift 57
+	.  error
+
+
+state 79
+	exp : procname begin . '(' arglist ')'  (43)
+
+	'('  shift 114
+	.  error
+
+
+state 80
+	defn : FUNC procname '(' . ')' stmt  (32)
+
+	')'  shift 115
+	.  error
+
+
+state 81
+	defn : PROC procname '(' . ')' stmt  (31)
+
+	')'  shift 116
+	.  error
+
+
+82: shift/reduce conflict (shift 46, reduce 9) on EQ
+82: shift/reduce conflict (shift 47, reduce 9) on NEQ
+82: shift/reduce conflict (shift 48, reduce 9) on GT
+82: shift/reduce conflict (shift 49, reduce 9) on GE
+82: shift/reduce conflict (shift 50, reduce 9) on LT
+82: shift/reduce conflict (shift 51, reduce 9) on LE
+82: shift/reduce conflict (shift 57, reduce 9) on '^'
+state 82
+	asgn : VAR '=' exp .  (9)
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	BLTIN  reduce 9
+	IF  reduce 9
+	ELSE  reduce 9
+	WHILE  reduce 9
+	FOR  reduce 9
+	PRINT  reduce 9
+	RETURN  reduce 9
+	FUNCTION  reduce 9
+	PROCEDURE  reduce 9
+	ARG  reduce 9
+	NUMBER  reduce 9
+	VAR  reduce 9
+	VARCRD  reduce 9
+	'\n'  reduce 9
+	';'  reduce 9
+	'('  reduce 9
+	')'  reduce 9
+	'{'  reduce 9
+	'}'  reduce 9
+	','  reduce 9
+	'c'  reduce 9
+
+
+state 83
+	sec : VARCRD .  (67)
+
+	.  reduce 67
+
+
+84: reduce/reduce conflict (reduce 60, reduce 65) on BLTIN
+84: reduce/reduce conflict (reduce 60, reduce 65) on IF
+84: reduce/reduce conflict (reduce 60, reduce 65) on ELSE
+84: reduce/reduce conflict (reduce 60, reduce 65) on WHILE
+84: reduce/reduce conflict (reduce 60, reduce 65) on FOR
+84: reduce/reduce conflict (reduce 60, reduce 65) on PRINT
+84: reduce/reduce conflict (reduce 60, reduce 65) on RETURN
+84: reduce/reduce conflict (reduce 60, reduce 65) on FUNCTION
+84: reduce/reduce conflict (reduce 60, reduce 65) on PROCEDURE
+84: reduce/reduce conflict (reduce 60, reduce 65) on ARG
+84: reduce/reduce conflict (reduce 60, reduce 65) on NUMBER
+84: reduce/reduce conflict (reduce 60, reduce 65) on VAR
+84: reduce/reduce conflict (reduce 60, reduce 65) on VARCRD
+84: reduce/reduce conflict (reduce 60, reduce 65) on '\n'
+84: reduce/reduce conflict (reduce 60, reduce 65) on ';'
+84: reduce/reduce conflict (reduce 60, reduce 65) on '('
+84: reduce/reduce conflict (reduce 60, reduce 65) on '{'
+84: reduce/reduce conflict (reduce 60, reduce 65) on '}'
+84: reduce/reduce conflict (reduce 60, reduce 65) on 'c'
+84: reduce/reduce conflict (reduce 60, reduce 65) on 'e'
+84: reduce/reduce conflict (reduce 60, reduce 65) on 'n'
+84: reduce/reduce conflict (reduce 60, reduce 65) on 'o'
+84: reduce/reduce conflict (reduce 60, reduce 65) on 's'
+84: reduce/reduce conflict (reduce 60, reduce 65) on 'u'
+84: reduce/reduce conflict (reduce 60, reduce 65) on 'd'
+84: reduce/reduce conflict (reduce 60, reduce 65) on '&'
+84: reduce/reduce conflict (reduce 60, reduce 65) on '%'
+84: reduce/reduce conflict (reduce 60, reduce 65) on '#'
+84: reduce/reduce conflict (reduce 60, reduce 65) on '"'
+state 84
+	binstr : 'c' .  (60)
+	sec : 'c' .  (65)
+
+	BLTIN  reduce 60
+	IF  reduce 60
+	ELSE  reduce 60
+	WHILE  reduce 60
+	FOR  reduce 60
+	PRINT  reduce 60
+	RETURN  reduce 60
+	FUNCTION  reduce 60
+	PROCEDURE  reduce 60
+	ARG  reduce 60
+	NUMBER  reduce 60
+	VAR  reduce 60
+	VARCRD  reduce 60
+	'-'  reduce 65
+	'+'  reduce 65
+	'\n'  reduce 60
+	';'  reduce 60
+	'('  reduce 60
+	'{'  reduce 60
+	'}'  reduce 60
+	'c'  reduce 60
+	'e'  reduce 60
+	'n'  reduce 60
+	'o'  reduce 60
+	's'  reduce 60
+	'u'  reduce 60
+	'd'  reduce 60
+	'&'  reduce 60
+	'%'  reduce 60
+	'#'  reduce 60
+	'"'  reduce 60
+
+
+state 85
+	binstr : expcoord .  (61)
+	expcoord : expcoord . '+' expcoord  (62)
+	expcoord : expcoord . '-' expcoord  (63)
+
+	'-'  shift 59
+	'+'  shift 60
+	BLTIN  reduce 61
+	IF  reduce 61
+	ELSE  reduce 61
+	WHILE  reduce 61
+	FOR  reduce 61
+	PRINT  reduce 61
+	RETURN  reduce 61
+	FUNCTION  reduce 61
+	PROCEDURE  reduce 61
+	ARG  reduce 61
+	NUMBER  reduce 61
+	VAR  reduce 61
+	VARCRD  reduce 61
+	'\n'  reduce 61
+	';'  reduce 61
+	'('  reduce 61
+	'{'  reduce 61
+	'}'  reduce 61
+	'c'  reduce 61
+	'e'  reduce 61
+	'n'  reduce 61
+	'o'  reduce 61
+	's'  reduce 61
+	'u'  reduce 61
+	'd'  reduce 61
+	'&'  reduce 61
+	'%'  reduce 61
+	'#'  reduce 61
+	'"'  reduce 61
+
+
+state 86
+	asigncoord : VARCRD '=' binstr .  (58)
+	binstr : binstr . instr  (59)
+
+	'e'  shift 67
+	'n'  shift 68
+	'o'  shift 69
+	's'  shift 70
+	'u'  shift 71
+	'd'  shift 72
+	'&'  shift 73
+	'%'  shift 74
+	'#'  shift 75
+	'"'  shift 76
+	BLTIN  reduce 58
+	IF  reduce 58
+	ELSE  reduce 58
+	WHILE  reduce 58
+	FOR  reduce 58
+	PRINT  reduce 58
+	RETURN  reduce 58
+	FUNCTION  reduce 58
+	PROCEDURE  reduce 58
+	ARG  reduce 58
+	NUMBER  reduce 58
+	VAR  reduce 58
+	VARCRD  reduce 58
+	'\n'  reduce 58
+	';'  reduce 58
+	'('  reduce 58
+	'{'  reduce 58
+	'}'  reduce 58
+	'c'  reduce 58
+
+	instr  goto 117
+
+
+state 87
+	exp : '(' exp ')' .  (51)
+
+	.  reduce 51
+
+
+state 88
+	stmtlist : stmtlist '\n' .  (29)
+
+	.  reduce 29
+
+
+state 89
+	stmt : '{' stmtlist '}' .  (20)
+
+	.  reduce 20
+
+
+state 90
+	stmtlist : stmtlist stmt .  (30)
+
+	.  reduce 30
+
+
+state 91
+	stmt : exp .  (10)
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	BLTIN  reduce 10
+	IF  reduce 10
+	ELSE  reduce 10
+	WHILE  reduce 10
+	FOR  reduce 10
+	PRINT  reduce 10
+	RETURN  reduce 10
+	FUNCTION  reduce 10
+	PROCEDURE  reduce 10
+	ARG  reduce 10
+	NUMBER  reduce 10
+	VAR  reduce 10
+	VARCRD  reduce 10
+	'\n'  reduce 10
+	';'  reduce 10
+	'('  reduce 10
+	'{'  reduce 10
+	'}'  reduce 10
+	'c'  reduce 10
+
+
+state 92
+	stmt : asigncoord .  (14)
+
+	.  reduce 14
+
+
+state 93
+	stmt : expcoord .  (15)
+	expcoord : expcoord . '+' expcoord  (62)
+	expcoord : expcoord . '-' expcoord  (63)
+
+	'-'  shift 59
+	'+'  shift 60
+	BLTIN  reduce 15
+	IF  reduce 15
+	ELSE  reduce 15
+	WHILE  reduce 15
+	FOR  reduce 15
+	PRINT  reduce 15
+	RETURN  reduce 15
+	FUNCTION  reduce 15
+	PROCEDURE  reduce 15
+	ARG  reduce 15
+	NUMBER  reduce 15
+	VAR  reduce 15
+	VARCRD  reduce 15
+	'\n'  reduce 15
+	';'  reduce 15
+	'('  reduce 15
+	'{'  reduce 15
+	'}'  reduce 15
+	'c'  reduce 15
+
+
+94: shift/reduce conflict (shift 46, reduce 52) on EQ
+94: shift/reduce conflict (shift 47, reduce 52) on NEQ
+94: shift/reduce conflict (shift 48, reduce 52) on GT
+94: shift/reduce conflict (shift 49, reduce 52) on GE
+94: shift/reduce conflict (shift 50, reduce 52) on LT
+94: shift/reduce conflict (shift 51, reduce 52) on LE
+94: shift/reduce conflict (shift 52, reduce 52) on '-'
+94: shift/reduce conflict (shift 53, reduce 52) on '+'
+94: shift/reduce conflict (shift 54, reduce 52) on '*'
+94: shift/reduce conflict (shift 55, reduce 52) on '/'
+94: shift/reduce conflict (shift 57, reduce 52) on '^'
+state 94
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp EQ exp .  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	BLTIN  reduce 52
+	IF  reduce 52
+	ELSE  reduce 52
+	WHILE  reduce 52
+	FOR  reduce 52
+	PRINT  reduce 52
+	RETURN  reduce 52
+	FUNCTION  reduce 52
+	PROCEDURE  reduce 52
+	ARG  reduce 52
+	NUMBER  reduce 52
+	VAR  reduce 52
+	VARCRD  reduce 52
+	'\n'  reduce 52
+	';'  reduce 52
+	'('  reduce 52
+	')'  reduce 52
+	'{'  reduce 52
+	'}'  reduce 52
+	','  reduce 52
+	'c'  reduce 52
+
+
+95: shift/reduce conflict (shift 46, reduce 53) on EQ
+95: shift/reduce conflict (shift 47, reduce 53) on NEQ
+95: shift/reduce conflict (shift 48, reduce 53) on GT
+95: shift/reduce conflict (shift 49, reduce 53) on GE
+95: shift/reduce conflict (shift 50, reduce 53) on LT
+95: shift/reduce conflict (shift 51, reduce 53) on LE
+95: shift/reduce conflict (shift 52, reduce 53) on '-'
+95: shift/reduce conflict (shift 53, reduce 53) on '+'
+95: shift/reduce conflict (shift 54, reduce 53) on '*'
+95: shift/reduce conflict (shift 55, reduce 53) on '/'
+95: shift/reduce conflict (shift 57, reduce 53) on '^'
+state 95
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp NEQ exp .  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	BLTIN  reduce 53
+	IF  reduce 53
+	ELSE  reduce 53
+	WHILE  reduce 53
+	FOR  reduce 53
+	PRINT  reduce 53
+	RETURN  reduce 53
+	FUNCTION  reduce 53
+	PROCEDURE  reduce 53
+	ARG  reduce 53
+	NUMBER  reduce 53
+	VAR  reduce 53
+	VARCRD  reduce 53
+	'\n'  reduce 53
+	';'  reduce 53
+	'('  reduce 53
+	')'  reduce 53
+	'{'  reduce 53
+	'}'  reduce 53
+	','  reduce 53
+	'c'  reduce 53
+
+
+96: shift/reduce conflict (shift 46, reduce 54) on EQ
+96: shift/reduce conflict (shift 47, reduce 54) on NEQ
+96: shift/reduce conflict (shift 48, reduce 54) on GT
+96: shift/reduce conflict (shift 49, reduce 54) on GE
+96: shift/reduce conflict (shift 50, reduce 54) on LT
+96: shift/reduce conflict (shift 51, reduce 54) on LE
+96: shift/reduce conflict (shift 52, reduce 54) on '-'
+96: shift/reduce conflict (shift 53, reduce 54) on '+'
+96: shift/reduce conflict (shift 54, reduce 54) on '*'
+96: shift/reduce conflict (shift 55, reduce 54) on '/'
+96: shift/reduce conflict (shift 57, reduce 54) on '^'
+state 96
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp GT exp .  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	BLTIN  reduce 54
+	IF  reduce 54
+	ELSE  reduce 54
+	WHILE  reduce 54
+	FOR  reduce 54
+	PRINT  reduce 54
+	RETURN  reduce 54
+	FUNCTION  reduce 54
+	PROCEDURE  reduce 54
+	ARG  reduce 54
+	NUMBER  reduce 54
+	VAR  reduce 54
+	VARCRD  reduce 54
+	'\n'  reduce 54
+	';'  reduce 54
+	'('  reduce 54
+	')'  reduce 54
+	'{'  reduce 54
+	'}'  reduce 54
+	','  reduce 54
+	'c'  reduce 54
+
+
+97: shift/reduce conflict (shift 46, reduce 55) on EQ
+97: shift/reduce conflict (shift 47, reduce 55) on NEQ
+97: shift/reduce conflict (shift 48, reduce 55) on GT
+97: shift/reduce conflict (shift 49, reduce 55) on GE
+97: shift/reduce conflict (shift 50, reduce 55) on LT
+97: shift/reduce conflict (shift 51, reduce 55) on LE
+97: shift/reduce conflict (shift 52, reduce 55) on '-'
+97: shift/reduce conflict (shift 53, reduce 55) on '+'
+97: shift/reduce conflict (shift 54, reduce 55) on '*'
+97: shift/reduce conflict (shift 55, reduce 55) on '/'
+97: shift/reduce conflict (shift 57, reduce 55) on '^'
+state 97
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp GE exp .  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	BLTIN  reduce 55
+	IF  reduce 55
+	ELSE  reduce 55
+	WHILE  reduce 55
+	FOR  reduce 55
+	PRINT  reduce 55
+	RETURN  reduce 55
+	FUNCTION  reduce 55
+	PROCEDURE  reduce 55
+	ARG  reduce 55
+	NUMBER  reduce 55
+	VAR  reduce 55
+	VARCRD  reduce 55
+	'\n'  reduce 55
+	';'  reduce 55
+	'('  reduce 55
+	')'  reduce 55
+	'{'  reduce 55
+	'}'  reduce 55
+	','  reduce 55
+	'c'  reduce 55
+
+
+98: shift/reduce conflict (shift 46, reduce 56) on EQ
+98: shift/reduce conflict (shift 47, reduce 56) on NEQ
+98: shift/reduce conflict (shift 48, reduce 56) on GT
+98: shift/reduce conflict (shift 49, reduce 56) on GE
+98: shift/reduce conflict (shift 50, reduce 56) on LT
+98: shift/reduce conflict (shift 51, reduce 56) on LE
+98: shift/reduce conflict (shift 52, reduce 56) on '-'
+98: shift/reduce conflict (shift 53, reduce 56) on '+'
+98: shift/reduce conflict (shift 54, reduce 56) on '*'
+98: shift/reduce conflict (shift 55, reduce 56) on '/'
+98: shift/reduce conflict (shift 57, reduce 56) on '^'
+state 98
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp LT exp .  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	BLTIN  reduce 56
+	IF  reduce 56
+	ELSE  reduce 56
+	WHILE  reduce 56
+	FOR  reduce 56
+	PRINT  reduce 56
+	RETURN  reduce 56
+	FUNCTION  reduce 56
+	PROCEDURE  reduce 56
+	ARG  reduce 56
+	NUMBER  reduce 56
+	VAR  reduce 56
+	VARCRD  reduce 56
+	'\n'  reduce 56
+	';'  reduce 56
+	'('  reduce 56
+	')'  reduce 56
+	'{'  reduce 56
+	'}'  reduce 56
+	','  reduce 56
+	'c'  reduce 56
+
+
+99: shift/reduce conflict (shift 46, reduce 57) on EQ
+99: shift/reduce conflict (shift 47, reduce 57) on NEQ
+99: shift/reduce conflict (shift 48, reduce 57) on GT
+99: shift/reduce conflict (shift 49, reduce 57) on GE
+99: shift/reduce conflict (shift 50, reduce 57) on LT
+99: shift/reduce conflict (shift 51, reduce 57) on LE
+99: shift/reduce conflict (shift 52, reduce 57) on '-'
+99: shift/reduce conflict (shift 53, reduce 57) on '+'
+99: shift/reduce conflict (shift 54, reduce 57) on '*'
+99: shift/reduce conflict (shift 55, reduce 57) on '/'
+99: shift/reduce conflict (shift 57, reduce 57) on '^'
+state 99
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+	exp : exp LE exp .  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	BLTIN  reduce 57
+	IF  reduce 57
+	ELSE  reduce 57
+	WHILE  reduce 57
+	FOR  reduce 57
+	PRINT  reduce 57
+	RETURN  reduce 57
+	FUNCTION  reduce 57
+	PROCEDURE  reduce 57
+	ARG  reduce 57
+	NUMBER  reduce 57
+	VAR  reduce 57
+	VARCRD  reduce 57
+	'\n'  reduce 57
+	';'  reduce 57
+	'('  reduce 57
+	')'  reduce 57
+	'{'  reduce 57
+	'}'  reduce 57
+	','  reduce 57
+	'c'  reduce 57
+
+
+100: shift/reduce conflict (shift 46, reduce 47) on EQ
+100: shift/reduce conflict (shift 47, reduce 47) on NEQ
+100: shift/reduce conflict (shift 48, reduce 47) on GT
+100: shift/reduce conflict (shift 49, reduce 47) on GE
+100: shift/reduce conflict (shift 50, reduce 47) on LT
+100: shift/reduce conflict (shift 51, reduce 47) on LE
+100: shift/reduce conflict (shift 57, reduce 47) on '^'
+state 100
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp '-' exp .  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	BLTIN  reduce 47
+	IF  reduce 47
+	ELSE  reduce 47
+	WHILE  reduce 47
+	FOR  reduce 47
+	PRINT  reduce 47
+	RETURN  reduce 47
+	FUNCTION  reduce 47
+	PROCEDURE  reduce 47
+	ARG  reduce 47
+	NUMBER  reduce 47
+	VAR  reduce 47
+	VARCRD  reduce 47
+	'-'  reduce 47
+	'+'  reduce 47
+	'\n'  reduce 47
+	';'  reduce 47
+	'('  reduce 47
+	')'  reduce 47
+	'{'  reduce 47
+	'}'  reduce 47
+	','  reduce 47
+	'c'  reduce 47
+
+
+101: shift/reduce conflict (shift 46, reduce 46) on EQ
+101: shift/reduce conflict (shift 47, reduce 46) on NEQ
+101: shift/reduce conflict (shift 48, reduce 46) on GT
+101: shift/reduce conflict (shift 49, reduce 46) on GE
+101: shift/reduce conflict (shift 50, reduce 46) on LT
+101: shift/reduce conflict (shift 51, reduce 46) on LE
+101: shift/reduce conflict (shift 57, reduce 46) on '^'
+state 101
+	exp : exp . '+' exp  (46)
+	exp : exp '+' exp .  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	BLTIN  reduce 46
+	IF  reduce 46
+	ELSE  reduce 46
+	WHILE  reduce 46
+	FOR  reduce 46
+	PRINT  reduce 46
+	RETURN  reduce 46
+	FUNCTION  reduce 46
+	PROCEDURE  reduce 46
+	ARG  reduce 46
+	NUMBER  reduce 46
+	VAR  reduce 46
+	VARCRD  reduce 46
+	'-'  reduce 46
+	'+'  reduce 46
+	'\n'  reduce 46
+	';'  reduce 46
+	'('  reduce 46
+	')'  reduce 46
+	'{'  reduce 46
+	'}'  reduce 46
+	','  reduce 46
+	'c'  reduce 46
+
+
+102: shift/reduce conflict (shift 46, reduce 48) on EQ
+102: shift/reduce conflict (shift 47, reduce 48) on NEQ
+102: shift/reduce conflict (shift 48, reduce 48) on GT
+102: shift/reduce conflict (shift 49, reduce 48) on GE
+102: shift/reduce conflict (shift 50, reduce 48) on LT
+102: shift/reduce conflict (shift 51, reduce 48) on LE
+102: shift/reduce conflict (shift 57, reduce 48) on '^'
+state 102
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp '*' exp .  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'^'  shift 57
+	BLTIN  reduce 48
+	IF  reduce 48
+	ELSE  reduce 48
+	WHILE  reduce 48
+	FOR  reduce 48
+	PRINT  reduce 48
+	RETURN  reduce 48
+	FUNCTION  reduce 48
+	PROCEDURE  reduce 48
+	ARG  reduce 48
+	NUMBER  reduce 48
+	VAR  reduce 48
+	VARCRD  reduce 48
+	'-'  reduce 48
+	'+'  reduce 48
+	'*'  reduce 48
+	'/'  reduce 48
+	'\n'  reduce 48
+	';'  reduce 48
+	'('  reduce 48
+	')'  reduce 48
+	'{'  reduce 48
+	'}'  reduce 48
+	','  reduce 48
+	'c'  reduce 48
+
+
+103: shift/reduce conflict (shift 46, reduce 49) on EQ
+103: shift/reduce conflict (shift 47, reduce 49) on NEQ
+103: shift/reduce conflict (shift 48, reduce 49) on GT
+103: shift/reduce conflict (shift 49, reduce 49) on GE
+103: shift/reduce conflict (shift 50, reduce 49) on LT
+103: shift/reduce conflict (shift 51, reduce 49) on LE
+103: shift/reduce conflict (shift 57, reduce 49) on '^'
+state 103
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp '/' exp .  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'^'  shift 57
+	BLTIN  reduce 49
+	IF  reduce 49
+	ELSE  reduce 49
+	WHILE  reduce 49
+	FOR  reduce 49
+	PRINT  reduce 49
+	RETURN  reduce 49
+	FUNCTION  reduce 49
+	PROCEDURE  reduce 49
+	ARG  reduce 49
+	NUMBER  reduce 49
+	VAR  reduce 49
+	VARCRD  reduce 49
+	'-'  reduce 49
+	'+'  reduce 49
+	'*'  reduce 49
+	'/'  reduce 49
+	'\n'  reduce 49
+	';'  reduce 49
+	'('  reduce 49
+	')'  reduce 49
+	'{'  reduce 49
+	'}'  reduce 49
+	','  reduce 49
+	'c'  reduce 49
+
+
+104: shift/reduce conflict (shift 46, reduce 50) on EQ
+104: shift/reduce conflict (shift 47, reduce 50) on NEQ
+104: shift/reduce conflict (shift 48, reduce 50) on GT
+104: shift/reduce conflict (shift 49, reduce 50) on GE
+104: shift/reduce conflict (shift 50, reduce 50) on LT
+104: shift/reduce conflict (shift 51, reduce 50) on LE
+104: shift/reduce conflict (shift 52, reduce 50) on '-'
+104: shift/reduce conflict (shift 53, reduce 50) on '+'
+104: shift/reduce conflict (shift 54, reduce 50) on '*'
+104: shift/reduce conflict (shift 55, reduce 50) on '/'
+104: shift/reduce conflict (shift 57, reduce 50) on '^'
+state 104
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp '^' exp .  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	BLTIN  reduce 50
+	IF  reduce 50
+	ELSE  reduce 50
+	WHILE  reduce 50
+	FOR  reduce 50
+	PRINT  reduce 50
+	RETURN  reduce 50
+	FUNCTION  reduce 50
+	PROCEDURE  reduce 50
+	ARG  reduce 50
+	NUMBER  reduce 50
+	VAR  reduce 50
+	VARCRD  reduce 50
+	'\n'  reduce 50
+	';'  reduce 50
+	'('  reduce 50
+	')'  reduce 50
+	'{'  reduce 50
+	'}'  reduce 50
+	','  reduce 50
+	'c'  reduce 50
+
+
+state 105
+	expcoord : expcoord . '+' expcoord  (62)
+	expcoord : expcoord . '-' expcoord  (63)
+	expcoord : expcoord '-' expcoord .  (63)
+
+	.  reduce 63
+
+
+state 106
+	expcoord : expcoord . '+' expcoord  (62)
+	expcoord : expcoord '+' expcoord .  (62)
+	expcoord : expcoord . '-' expcoord  (63)
+
+	.  reduce 62
+
+
+state 107
+	stmt : procname begin '(' . arglist ')'  (12)
+	exp : procname begin '(' . arglist ')'  (43)
+	arglist : .  (36)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	')'  reduce 36
+	','  reduce 36
+
+	asgn  goto 32
+	exp  goto 118
+	procname  goto 34
+	arglist  goto 119
+
+
+state 108
+	cond : '(' exp . ')'  (21)
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	')'  shift 120
+	'^'  shift 57
+	.  error
+
+
+state 109
+	stmt : while cond stmt . end  (16)
+	end : .  (27)
+
+	.  reduce 27
+
+	end  goto 121
+
+
+state 110
+	stmt : if cond stmt . end  (17)
+	stmt : if cond stmt . end ELSE stmt end  (18)
+	end : .  (27)
+
+	.  reduce 27
+
+	end  goto 122
+
+
+state 111
+	inicio : exp .  (25)
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	';'  reduce 25
+
+
+state 112
+	stmt : for '(' inicio . ';' cond ';' inc ')' stmt end  (19)
+
+	';'  shift 123
+	.  error
+
+
+state 113
+	exp : BLTIN '(' exp ')' .  (45)
+
+	.  reduce 45
+
+
+state 114
+	exp : procname begin '(' . arglist ')'  (43)
+	arglist : .  (36)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	')'  reduce 36
+	','  reduce 36
+
+	asgn  goto 32
+	exp  goto 118
+	procname  goto 34
+	arglist  goto 124
+
+
+state 115
+	defn : FUNC procname '(' ')' . stmt  (32)
+
+	BLTIN  shift 2
+	IF  shift 3
+	WHILE  shift 4
+	FOR  shift 5
+	PRINT  shift 6
+	RETURN  shift 9
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	VARCRD  shift 15
+	'('  shift 17
+	'{'  shift 18
+	'c'  shift 19
+	.  error
+
+	asgn  goto 32
+	stmt  goto 125
+	exp  goto 91
+	asigncoord  goto 92
+	expcoord  goto 93
+	procname  goto 26
+	while  goto 27
+	if  goto 28
+	for  goto 29
+	sec  goto 30
+
+
+state 116
+	defn : PROC procname '(' ')' . stmt  (31)
+
+	BLTIN  shift 2
+	IF  shift 3
+	WHILE  shift 4
+	FOR  shift 5
+	PRINT  shift 6
+	RETURN  shift 9
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	VARCRD  shift 15
+	'('  shift 17
+	'{'  shift 18
+	'c'  shift 19
+	.  error
+
+	asgn  goto 32
+	stmt  goto 126
+	exp  goto 91
+	asigncoord  goto 92
+	expcoord  goto 93
+	procname  goto 26
+	while  goto 27
+	if  goto 28
+	for  goto 29
+	sec  goto 30
+
+
+state 117
+	binstr : binstr instr .  (59)
+
+	.  reduce 59
+
+
+state 118
+	arglist : exp .  (37)
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	')'  reduce 37
+	','  reduce 37
+
+
+state 119
+	stmt : procname begin '(' arglist . ')'  (12)
+	arglist : arglist . ',' exp  (38)
+	exp : procname begin '(' arglist . ')'  (43)
+
+	')'  shift 127
+	','  shift 128
+	.  error
+
+
+state 120
+	cond : '(' exp ')' .  (21)
+
+	.  reduce 21
+
+
+state 121
+	stmt : while cond stmt end .  (16)
+
+	.  reduce 16
+
+
+122: shift/reduce conflict (shift 129, reduce 17) on ELSE
+state 122
+	stmt : if cond stmt end .  (17)
+	stmt : if cond stmt end . ELSE stmt end  (18)
+
+	ELSE  shift 129
+	BLTIN  reduce 17
+	IF  reduce 17
+	WHILE  reduce 17
+	FOR  reduce 17
+	PRINT  reduce 17
+	RETURN  reduce 17
+	FUNCTION  reduce 17
+	PROCEDURE  reduce 17
+	ARG  reduce 17
+	NUMBER  reduce 17
+	VAR  reduce 17
+	VARCRD  reduce 17
+	'\n'  reduce 17
+	';'  reduce 17
+	'('  reduce 17
+	'{'  reduce 17
+	'}'  reduce 17
+	'c'  reduce 17
+
+
+state 123
+	stmt : for '(' inicio ';' . cond ';' inc ')' stmt end  (19)
+
+	'('  shift 63
+	.  error
+
+	cond  goto 130
+
+
+state 124
+	arglist : arglist . ',' exp  (38)
+	exp : procname begin '(' arglist . ')'  (43)
+
+	')'  shift 131
+	','  shift 128
+	.  error
+
+
+state 125
+	defn : FUNC procname '(' ')' stmt .  (32)
+
+	.  reduce 32
+
+
+state 126
+	defn : PROC procname '(' ')' stmt .  (31)
+
+	.  reduce 31
+
+
+127: reduce/reduce conflict (reduce 12, reduce 43) on BLTIN
+127: reduce/reduce conflict (reduce 12, reduce 43) on IF
+127: reduce/reduce conflict (reduce 12, reduce 43) on ELSE
+127: reduce/reduce conflict (reduce 12, reduce 43) on WHILE
+127: reduce/reduce conflict (reduce 12, reduce 43) on FOR
+127: reduce/reduce conflict (reduce 12, reduce 43) on PRINT
+127: reduce/reduce conflict (reduce 12, reduce 43) on RETURN
+127: reduce/reduce conflict (reduce 12, reduce 43) on FUNCTION
+127: reduce/reduce conflict (reduce 12, reduce 43) on PROCEDURE
+127: reduce/reduce conflict (reduce 12, reduce 43) on ARG
+127: reduce/reduce conflict (reduce 12, reduce 43) on NUMBER
+127: reduce/reduce conflict (reduce 12, reduce 43) on VAR
+127: reduce/reduce conflict (reduce 12, reduce 43) on VARCRD
+127: reduce/reduce conflict (reduce 12, reduce 43) on '\n'
+127: reduce/reduce conflict (reduce 12, reduce 43) on ';'
+127: reduce/reduce conflict (reduce 12, reduce 43) on '('
+127: reduce/reduce conflict (reduce 12, reduce 43) on '{'
+127: reduce/reduce conflict (reduce 12, reduce 43) on '}'
+127: reduce/reduce conflict (reduce 12, reduce 43) on 'c'
+state 127
+	stmt : procname begin '(' arglist ')' .  (12)
+	exp : procname begin '(' arglist ')' .  (43)
+
+	BLTIN  reduce 12
+	IF  reduce 12
+	ELSE  reduce 12
+	WHILE  reduce 12
+	FOR  reduce 12
+	PRINT  reduce 12
+	RETURN  reduce 12
+	EQ  reduce 43
+	NEQ  reduce 43
+	GT  reduce 43
+	GE  reduce 43
+	LT  reduce 43
+	LE  reduce 43
+	FUNCTION  reduce 12
+	PROCEDURE  reduce 12
+	ARG  reduce 12
+	NUMBER  reduce 12
+	VAR  reduce 12
+	VARCRD  reduce 12
+	'-'  reduce 43
+	'+'  reduce 43
+	'*'  reduce 43
+	'/'  reduce 43
+	'\n'  reduce 12
+	';'  reduce 12
+	'('  reduce 12
+	'{'  reduce 12
+	'}'  reduce 12
+	'^'  reduce 43
+	'c'  reduce 12
+
+
+state 128
+	arglist : arglist ',' . exp  (38)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 132
+	procname  goto 34
+
+
+state 129
+	stmt : if cond stmt end ELSE . stmt end  (18)
+
+	BLTIN  shift 2
+	IF  shift 3
+	WHILE  shift 4
+	FOR  shift 5
+	PRINT  shift 6
+	RETURN  shift 9
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	VARCRD  shift 15
+	'('  shift 17
+	'{'  shift 18
+	'c'  shift 19
+	.  error
+
+	asgn  goto 32
+	stmt  goto 133
+	exp  goto 91
+	asigncoord  goto 92
+	expcoord  goto 93
+	procname  goto 26
+	while  goto 27
+	if  goto 28
+	for  goto 29
+	sec  goto 30
+
+
+state 130
+	stmt : for '(' inicio ';' cond . ';' inc ')' stmt end  (19)
+
+	';'  shift 134
+	.  error
+
+
+state 131
+	exp : procname begin '(' arglist ')' .  (43)
+
+	.  reduce 43
+
+
+state 132
+	arglist : arglist ',' exp .  (38)
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	')'  reduce 38
+	','  reduce 38
+
+
+state 133
+	stmt : if cond stmt end ELSE stmt . end  (18)
+	end : .  (27)
+
+	.  reduce 27
+
+	end  goto 135
+
+
+state 134
+	stmt : for '(' inicio ';' cond ';' . inc ')' stmt end  (19)
+
+	BLTIN  shift 2
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	'('  shift 17
+	.  error
+
+	asgn  goto 32
+	exp  goto 136
+	procname  goto 34
+	inc  goto 137
+
+
+state 135
+	stmt : if cond stmt end ELSE stmt end .  (18)
+
+	.  reduce 18
+
+
+state 136
+	inc : exp .  (26)
+	exp : exp . '+' exp  (46)
+	exp : exp . '-' exp  (47)
+	exp : exp . '*' exp  (48)
+	exp : exp . '/' exp  (49)
+	exp : exp . '^' exp  (50)
+	exp : exp . EQ exp  (52)
+	exp : exp . NEQ exp  (53)
+	exp : exp . GT exp  (54)
+	exp : exp . GE exp  (55)
+	exp : exp . LT exp  (56)
+	exp : exp . LE exp  (57)
+
+	EQ  shift 46
+	NEQ  shift 47
+	GT  shift 48
+	GE  shift 49
+	LT  shift 50
+	LE  shift 51
+	'-'  shift 52
+	'+'  shift 53
+	'*'  shift 54
+	'/'  shift 55
+	'^'  shift 57
+	')'  reduce 26
+
+
+state 137
+	stmt : for '(' inicio ';' cond ';' inc . ')' stmt end  (19)
+
+	')'  shift 138
+	.  error
+
+
+state 138
+	stmt : for '(' inicio ';' cond ';' inc ')' . stmt end  (19)
+
+	BLTIN  shift 2
+	IF  shift 3
+	WHILE  shift 4
+	FOR  shift 5
+	PRINT  shift 6
+	RETURN  shift 9
+	FUNCTION  shift 10
+	PROCEDURE  shift 11
+	ARG  shift 12
+	NUMBER  shift 13
+	VAR  shift 14
+	VARCRD  shift 15
+	'('  shift 17
+	'{'  shift 18
+	'c'  shift 19
+	.  error
+
+	asgn  goto 32
+	stmt  goto 139
+	exp  goto 91
+	asigncoord  goto 92
+	expcoord  goto 93
+	procname  goto 26
+	while  goto 27
+	if  goto 28
+	for  goto 29
+	sec  goto 30
+
+
+state 139
+	stmt : for '(' inicio ';' cond ';' inc ')' stmt . end  (19)
+	end : .  (27)
+
+	.  reduce 27
+
+	end  goto 140
+
+
+state 140
+	stmt : for '(' inicio ';' cond ';' inc ')' stmt end .  (19)
+
+	.  reduce 19
+
+
+State 14 contains 1 reduce/reduce conflict.
+State 21 contains 1 shift/reduce conflict.
+State 23 contains 1 shift/reduce conflict.
+State 24 contains 1 shift/reduce conflict.
+State 25 contains 1 shift/reduce conflict.
+State 30 contains 10 shift/reduce conflicts.
+State 82 contains 7 shift/reduce conflicts.
+State 84 contains 29 reduce/reduce conflicts.
+State 94 contains 11 shift/reduce conflicts.
+State 95 contains 11 shift/reduce conflicts.
+State 96 contains 11 shift/reduce conflicts.
+State 97 contains 11 shift/reduce conflicts.
+State 98 contains 11 shift/reduce conflicts.
+State 99 contains 11 shift/reduce conflicts.
+State 100 contains 7 shift/reduce conflicts.
+State 101 contains 7 shift/reduce conflicts.
+State 102 contains 7 shift/reduce conflicts.
+State 103 contains 7 shift/reduce conflicts.
+State 104 contains 11 shift/reduce conflicts.
+State 122 contains 1 shift/reduce conflict.
+State 127 contains 19 reduce/reduce conflicts.
+
+
+47 terminals, 22 nonterminals
+78 grammar rules, 141 states

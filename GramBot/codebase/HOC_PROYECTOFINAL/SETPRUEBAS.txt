@@ -1,0 +1,23 @@
+for(i=0; (i<2); i=i+1) { c n e e e e + c n n }
+
+while(i<2) {i=i+2 c n n + c n n }
+
+
+while(i<1){ while(DIST>30){ c n + c } i=i+1 c o n n + c }  
+
+while(i<2){ while(j<2){ j=j+1 c n + c } i=i+1 c e + c }  
+
+while(i<2){ while(<2){ j=j+1 c n + c } i=i+1 c e + c }  
+
+while(i<3){ while(DIST>20){ c n + c } i=i+1 c e + c }  
+
+for(i=0; (i<6); i=i+1) { c n e + c }
+
+for(i=0; (i<4); i=i+1) {  c e + c }
+
+for(i=0; (i<2); i=i+1) { for(j=0; (j<8); j=j+1) { c n o + c } c n e + c }
+
+while(DIST>10){ c e e  + c o o o}
+
+func escalera() { for (i=0; (i<$1); i=i+1) { c n e + c} } ;
+escalera(10)
