@@ -71,7 +71,7 @@ Grambot's codebase is within the folder "Grambot/codebase/", the folder contains
 
 ### License
 
-[![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://badges.mit-license.org)
+[![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](https://github.com/PitCoder/Compilers/blob/master/LICENSE)
 
 - **[MIT license](https://github.com/PitCoder/Compilers/blob/master/LICENSE)**
 - Copyright 2018 © <a href="https://github.com/PitCoder" target="_blank">Eric Alejandro López Ayala</a>
