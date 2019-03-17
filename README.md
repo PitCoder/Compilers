@@ -25,7 +25,7 @@ Is a program that translates and executes a program in one language, into a prog
 
 #### What is an Interpreter?
 <p align="justify">
-Is a program that reads an executable program and produces the results of running that program. Usually, this involves executing the source program in somefashion.
+Is a program that reads an executable program and produces the results of running that program. Usually, this involves executing the source program in some fashion.
 </p>
 
 <p align="center">
@@ -37,7 +37,7 @@ Is a program that reads an executable program and produces the results of runnin
 </p>
 
 #### Why study a compiler construction?
-<p>
+<p align="justify">
 Compiler construction is a microcosm of computer science where things like artificial intelligence, algorithms, computational theory, sistems and computer architectures all come together. Even if compilers are a well study subject, they are constantly changing by adding new features to pose new problems, changing costs and re-engineering of old solutions.
 </p>
 
